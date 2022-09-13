@@ -1,7 +1,7 @@
 package com.project.stockmarket.domain.model
 
 data class CorporationInfo(
-    val auditReportOpinion: String, // 감사보고서 의견내용
+    val auditReportOpinion: String, // 감사보고서의견내용
     val corpEngName: String,        // 법인영문명
     val corpName: String,           // 법인명
     val address: String,            // 기업기본주소
