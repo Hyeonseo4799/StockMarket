@@ -24,7 +24,7 @@ class StockInfoRepositoryImpl @Inject constructor(
         api.getCorporationInfo().toCorporationInfo()
     }
 
-    override suspend fun getKrxListedInfo(): Flow<NetworkResult<List<KrxListedInfo>>> = safeFlow {
-        api.getKrxListedInfo().map { it.toKrxListedInfo() }
+    override suspend fun getKrxListedInfo(basDt: String, likeItmsNm: String): Flow<NetworkResult<List<KrxListedInfo>>> = safeFlow {
+        api.getKrxListedInfo(basDt = basDt, likeItmsNm = likeItmsNm).response.body.items.item.map { it.toKrxListedInfo() }
     }
 }

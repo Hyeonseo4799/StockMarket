@@ -1,5 +1,6 @@
 package com.project.stockmarket.presentation.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,8 @@ import com.project.stockmarket.presentation.utils.KrxListedInfoState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,12 +22,8 @@ class KrxListedInfoViewModel @Inject constructor(
     private val _state = mutableStateOf(KrxListedInfoState())
     val state: State<KrxListedInfoState> = _state
 
-    init {
-        getKrxListedInfo()
-    }
-
-    private fun getKrxListedInfo() {
-        krxListedInfoUseCase().onEach { result ->
+    fun getKrxListedInfo(likeItmsNm: String) {
+        krxListedInfoUseCase(getCurrentDate(), likeItmsNm).onEach { result ->
             when (result) {
                 is NetworkResult.Error -> {
                     _state.value = KrxListedInfoState(error = result.message ?: "An unexpected error occurred")
@@ -37,5 +36,12 @@ class KrxListedInfoViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun getCurrentDate(): String {
+        val currentTime = System.currentTimeMillis()
+        val simpleDateFormat = SimpleDateFormat("yyyyMMdd", Locale.KOREA)
+        val baseDate = Integer.parseInt(simpleDateFormat.format(currentTime)) - 3
+        return baseDate.toString()
     }
 }

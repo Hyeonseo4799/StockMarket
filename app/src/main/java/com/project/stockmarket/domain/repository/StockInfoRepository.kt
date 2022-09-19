@@ -9,5 +9,5 @@ import kotlinx.coroutines.flow.Flow
 interface StockInfoRepository {
     suspend fun getStockPriceInfo(): Flow<NetworkResult<StockPriceInfo>>
     suspend fun getCorporationInfo(): Flow<NetworkResult<CorporationInfo>>
-    suspend fun getKrxListedInfo(): Flow<NetworkResult<List<KrxListedInfo>>>
+    suspend fun getKrxListedInfo(basDt: String, likeItmsNm: String): Flow<NetworkResult<List<KrxListedInfo>>>
 }
