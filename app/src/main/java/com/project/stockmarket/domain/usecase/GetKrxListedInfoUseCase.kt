@@ -1,6 +1,5 @@
 package com.project.stockmarket.domain.usecase
 
-import android.util.Log
 import com.project.stockmarket.data.NetworkResult
 import com.project.stockmarket.domain.model.KrxListedInfo
 import com.project.stockmarket.domain.repository.StockInfoRepository

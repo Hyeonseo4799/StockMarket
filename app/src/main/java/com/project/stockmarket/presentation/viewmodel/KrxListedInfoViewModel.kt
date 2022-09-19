@@ -1,6 +1,5 @@
 package com.project.stockmarket.presentation.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -32,7 +31,10 @@ class KrxListedInfoViewModel @Inject constructor(
                     _state.value = KrxListedInfoState(isLoading = true)
                 }
                 is NetworkResult.Success -> {
-                    _state.value = KrxListedInfoState(krxListedInfo = result.data ?: emptyList())
+                    _state.value = if (likeItmsNm.isEmpty())
+                        KrxListedInfoState(krxListedInfo = emptyList())
+                    else
+                        KrxListedInfoState(krxListedInfo = result.data ?: emptyList())
                 }
             }
         }.launchIn(viewModelScope)
