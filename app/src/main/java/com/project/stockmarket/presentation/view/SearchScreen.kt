@@ -18,12 +18,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.project.stockmarket.domain.model.KrxListedInfo
+import com.project.stockmarket.presentation.Screen
 import com.project.stockmarket.presentation.utils.KrxListedInfoState
 import com.project.stockmarket.presentation.viewmodel.KrxListedInfoViewModel
 
 @Composable
 fun SearchScreen(
-    viewModel: KrxListedInfoViewModel = hiltViewModel()
+    viewModel: KrxListedInfoViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val state = viewModel.state.value
     Column {
@@ -33,9 +37,9 @@ fun SearchScreen(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            viewModel.getKrxListedInfo(it)
+            if (it.isEmpty()) viewModel.setEmptyList() else viewModel.getKrxListedInfo(it)
         }
-        AutoCompleteView(state)
+        AutoCompleteView(state, navController)
     }
 }
 
@@ -78,11 +82,11 @@ fun SearchBar(
 
 @Composable
 fun AutoCompleteView(
-    state: KrxListedInfoState
+    state: KrxListedInfoState,
+    navController: NavController
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         LazyColumn(
             modifier = Modifier
@@ -90,17 +94,28 @@ fun AutoCompleteView(
                 .padding(horizontal = 20.dp)
                 .height(300.dp)
         ) {
-            items(state.krxListedInfo) { stockInfo ->
-                Text(
-                    text = stockInfo.stockName,
-                    modifier = Modifier
-                        .clickable {
-                            // 세부 페이지 이동 코드
-                        }
-                        .padding(vertical = 10.dp)
-                        .fillMaxWidth()
+            items(state.krxListedInfo) { krxListedInfo ->
+                StockListItem(
+                    krxListedInfo = krxListedInfo,
+                    onItemClick = {
+                        navController.navigate(Screen.DetailScreen.route + "/${krxListedInfo.corpNumber}")
+                    }
                 )
             }
         }
     }
+}
+
+@Composable
+fun StockListItem(
+    krxListedInfo: KrxListedInfo,
+    onItemClick: (KrxListedInfo) -> Unit
+) {
+    Text(
+        text = krxListedInfo.stockName,
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+            .fillMaxWidth()
+            .clickable { onItemClick(krxListedInfo) }
+    )
 }

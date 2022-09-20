@@ -22,7 +22,7 @@ class KrxListedInfoViewModel @Inject constructor(
     val state: State<KrxListedInfoState> = _state
 
     fun getKrxListedInfo(likeItmsNm: String) {
-        krxListedInfoUseCase(getCurrentDate(), likeItmsNm).onEach { result ->
+        krxListedInfoUseCase(getBaseDate(), likeItmsNm).onEach { result ->
             when (result) {
                 is NetworkResult.Error -> {
                     _state.value = KrxListedInfoState(error = result.message ?: "An unexpected error occurred")
@@ -31,19 +31,33 @@ class KrxListedInfoViewModel @Inject constructor(
                     _state.value = KrxListedInfoState(isLoading = true)
                 }
                 is NetworkResult.Success -> {
-                    _state.value = if (likeItmsNm.isEmpty())
-                        KrxListedInfoState(krxListedInfo = emptyList())
-                    else
-                        KrxListedInfoState(krxListedInfo = result.data ?: emptyList())
+                    _state.value = KrxListedInfoState(krxListedInfo = result.data ?: emptyList())
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    private fun getCurrentDate(): String {
-        val currentTime = System.currentTimeMillis()
-        val simpleDateFormat = SimpleDateFormat("yyyyMMdd", Locale.KOREA)
-        val baseDate = Integer.parseInt(simpleDateFormat.format(currentTime)) - 3
-        return baseDate.toString()
+    fun setEmptyList() {
+        _state.value = KrxListedInfoState(krxListedInfo = emptyList())
     }
+}
+
+
+private fun getBaseDate(): String {
+    val today = getCurrentDate()
+    val currentTime = System.currentTimeMillis()
+    val simpleDateFormat = SimpleDateFormat("yyyyMMdd", Locale.KOREA)
+    var baseDate = Integer.parseInt(simpleDateFormat.format(currentTime)) - 1
+
+    if (today <= 2) baseDate -= today
+    return baseDate.toString()
+}
+
+private fun getCurrentDate(): Int {
+    val currentTime = System.currentTimeMillis()
+    val date = Date(currentTime)
+    val calendar = Calendar.getInstance()
+    calendar.time = date
+
+    return calendar[Calendar.DAY_OF_WEEK]
 }
