@@ -11,8 +11,8 @@ import javax.inject.Inject
 class GetCorporationInfoUseCase @Inject constructor(
     private val repository: StockInfoRepository
 ) {
-    operator fun invoke(): Flow<NetworkResult<CorporationInfo>> = flow {
-        repository.getCorporationInfo().collect {
+    operator fun invoke(basDt: String, crno: String): Flow<NetworkResult<List<CorporationInfo>>> = flow {
+        repository.getCorporationInfo(basDt, crno).collect {
             emit(it)
         }
     }

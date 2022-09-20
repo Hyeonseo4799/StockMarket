@@ -4,6 +4,6 @@ import com.project.stockmarket.domain.model.CorporationInfo
 
 data class CorporationInfoState(
     val isLoading: Boolean = false,
-    val corporationInfo: CorporationInfo? = null,
+    val corporationInfo: List<CorporationInfo> = emptyList(),
     val error: String = ""
 )

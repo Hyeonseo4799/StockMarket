@@ -10,6 +10,8 @@ import com.project.stockmarket.presentation.utils.CorporationInfoState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,12 +21,8 @@ class CorporationInfoViewModel @Inject constructor(
     private val _state = mutableStateOf(CorporationInfoState())
     val state: State<CorporationInfoState> = _state
 
-    init {
-        getCorporationInfo()
-    }
-
-    private fun getCorporationInfo() {
-        corporationInfoUseCase().onEach { result ->
+    fun getCorporationInfo(crno: String) {
+        corporationInfoUseCase(getBaseDate(), crno).onEach { result ->
             when (result) {
                 is NetworkResult.Error -> {
                     _state.value = CorporationInfoState(error = result.message ?: "An unexpected error occurred")
@@ -33,9 +31,28 @@ class CorporationInfoViewModel @Inject constructor(
                     _state.value = CorporationInfoState(isLoading = true)
                 }
                 is NetworkResult.Success -> {
-                    _state.value = CorporationInfoState(corporationInfo = result.data)
+                    _state.value = CorporationInfoState(corporationInfo = result.data ?: emptyList())
                 }
             }
         }.launchIn(viewModelScope)
     }
+}
+
+private fun getBaseDate(): String {
+    val today = getCurrentDate()
+    val currentTime = System.currentTimeMillis()
+    val simpleDateFormat = SimpleDateFormat("yyyyMMdd", Locale.KOREA)
+    var baseDate = Integer.parseInt(simpleDateFormat.format(currentTime)) - 1
+
+    if (today <= 2) baseDate -= today
+    return baseDate.toString()
+}
+
+private fun getCurrentDate(): Int {
+    val currentTime = System.currentTimeMillis()
+    val date = Date(currentTime)
+    val calendar = Calendar.getInstance()
+    calendar.time = date
+
+    return calendar[Calendar.DAY_OF_WEEK]
 }

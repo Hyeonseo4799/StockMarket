@@ -20,8 +20,8 @@ class StockInfoRepositoryImpl @Inject constructor(
         api.getStockPriceInfo().toStockPriceInfo()
     }
 
-    override suspend fun getCorporationInfo(): Flow<NetworkResult<CorporationInfo>> = safeFlow {
-        api.getCorporationInfo().toCorporationInfo()
+    override suspend fun getCorporationInfo(basDt: String, crno: String): Flow<NetworkResult<List<CorporationInfo>>> = safeFlow {
+        api.getCorporationInfo(basDt = basDt, crno = crno).response.body.items.item.map { it.toCorporationInfo() }
     }
 
     override suspend fun getKrxListedInfo(basDt: String, likeItmsNm: String): Flow<NetworkResult<List<KrxListedInfo>>> = safeFlow {
