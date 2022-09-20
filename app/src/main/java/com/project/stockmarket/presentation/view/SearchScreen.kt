@@ -92,7 +92,6 @@ fun AutoCompleteView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
-                .height(300.dp)
         ) {
             items(state.krxListedInfo) { krxListedInfo ->
                 StockListItem(
@@ -114,8 +113,8 @@ fun StockListItem(
     Text(
         text = krxListedInfo.stockName,
         modifier = Modifier
-            .padding(vertical = 10.dp)
             .fillMaxWidth()
             .clickable { onItemClick(krxListedInfo) }
+            .padding(10.dp)
     )
 }

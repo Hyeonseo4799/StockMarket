@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.project.stockmarket.presentation.Screen
 import com.project.stockmarket.presentation.ui.theme.StockMarketTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,7 +21,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             StockMarketTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    SearchScreen()
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.SearchScreen.route
+                    ) {
+                        composable(route = Screen.SearchScreen.route) {
+                            SearchScreen(navController = navController)
+                        }
+                        composable(route = Screen.DetailScreen.route + "/{krxListedInfo.corpNumber}") {
+                            DetailScreen()
+                        }
+                    }
                 }
             }
         }
