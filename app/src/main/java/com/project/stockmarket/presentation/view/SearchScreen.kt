@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -16,17 +18,18 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.project.stockmarket.domain.model.KrxListedInfo
 import com.project.stockmarket.presentation.Screen
 import com.project.stockmarket.presentation.utils.KrxListedInfoState
-import com.project.stockmarket.presentation.viewmodel.KrxListedInfoViewModel
+import com.project.stockmarket.presentation.viewmodel.SearchViewModel
 
 @Composable
 fun SearchScreen(
-    viewModel: KrxListedInfoViewModel = hiltViewModel(),
+    viewModel: SearchViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val state = viewModel.state.value
@@ -35,7 +38,15 @@ fun SearchScreen(
             hint = "종목명을 입력하세요.",
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
+            onSearch = {
+                if (state.krxListedInfo.isNotEmpty()) {
+                    val company = state.krxListedInfo[0]
+                    navController.navigate(
+                        Screen.DetailScreen.route + "/${company.isinCode}" + "/${company.corpNumber}"
+                    )
+                }
+            }
         ) {
             if (it.isEmpty()) viewModel.setEmptyList() else viewModel.getKrxListedInfo(it)
         }
@@ -47,17 +58,23 @@ fun SearchScreen(
 fun SearchBar(
     modifier: Modifier = Modifier,
     hint: String = "",
-    onSearch: (String) -> Unit = {}
+    onSearch: () -> Unit,
+    onChange: (String) -> Unit = {}
 ) {
     var text by remember { mutableStateOf("") }
     var isHintDisplayed by remember { mutableStateOf(hint != "") }
 
     Box(modifier = modifier) {
         BasicTextField(
-            value = text, onValueChange = {
+            value = text,
+            onValueChange = {
                 text = it
-                onSearch(it)
+                onChange(it)
             },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = {
+                onSearch()
+            }),
             maxLines = 1,
             singleLine = true,
             textStyle = TextStyle(color = Color.Black),
@@ -97,7 +114,7 @@ fun AutoCompleteView(
                 StockListItem(
                     krxListedInfo = krxListedInfo,
                     onItemClick = {
-                        navController.navigate(Screen.DetailScreen.route + "/${krxListedInfo.corpNumber}")
+                        navController.navigate(Screen.DetailScreen.route + "/${krxListedInfo.isinCode}" + "/${krxListedInfo.corpNumber}")
                     }
                 )
             }
