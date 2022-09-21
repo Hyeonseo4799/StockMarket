@@ -7,7 +7,6 @@ data class StockPriceInfo(
     val highPrice: String,          // 고가
     val stockName: String,          // 주식회사명
     val lowPrice: String,           // 저가
-    val sharesOutstanding: String,  // 상장주식수
     val openingPrice: String,       // 시초가
     val marketCategory: String,     // 시장구분
     val marketCap: String,          // 시가총액

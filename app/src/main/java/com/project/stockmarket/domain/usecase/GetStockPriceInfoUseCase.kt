@@ -11,8 +11,8 @@ import javax.inject.Inject
 class GetStockPriceInfoUseCase @Inject constructor(
     private val repository: StockInfoRepository
 ) {
-    operator fun invoke(): Flow<NetworkResult<StockPriceInfo>> = flow {
-        repository.getStockPriceInfo().collect {
+    operator fun invoke(basDt: String, itmsNm: String): Flow<NetworkResult<List<StockPriceInfo>>> = flow {
+        repository.getStockPriceInfo(basDt, itmsNm).collect {
             emit(it)
         }
     }
