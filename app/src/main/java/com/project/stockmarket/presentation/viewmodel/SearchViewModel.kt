@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class KrxListedInfoViewModel @Inject constructor(
+class SearchViewModel @Inject constructor(
     private val krxListedInfoUseCase: GetKrxListedInfoUseCase
 ) : BaseViewModel() {
     private val _state = mutableStateOf(KrxListedInfoState())
