@@ -29,8 +29,8 @@ class MainActivity : ComponentActivity() {
                         composable(route = Screen.SearchScreen.route) {
                             SearchScreen(navController = navController)
                         }
-                        composable(route = Screen.DetailScreen.route + "/{corpNumber}"){
-                            DetailScreen(navController, it.arguments?.getString("corpNumber"))
+                        composable(route = Screen.DetailScreen.route + "/{isinCode}" + "/{corpNumber}") {
+                            DetailScreen(isinCode = it.arguments!!.getString("isinCode")!!, corpNumber = it.arguments!!.getString("corpNumber")!!)
                         }
                     }
                 }

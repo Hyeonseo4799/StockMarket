@@ -22,18 +22,9 @@ data class StockIssuanceInfoResponse(
                 data class Item(
                     val basDt: String,
                     val crno: String,
-                    val dpsgCanDt: String,
-                    val dpsgRegDt: String,
-                    val isinCd: String,
-                    val isinCdNm: String,
-                    val issuFrmtClsfNm: String,
-                    val issuStckCnt: String,
-                    val lstgAbolDt: String,
-                    val lstgDt: String,
-                    val scrsItmsKcd: String,
-                    val scrsItmsKcdNm: String,
-                    val stckIssuCmpyNm: String,
-                    val stckParPrc: String
+                    val onskTisuCnt: String,
+                    val pfstTisuCnt: String,
+                    val stckIssuCmpyNm: String
                 )
             }
         }
@@ -47,8 +38,7 @@ data class StockIssuanceInfoResponse(
 
 fun Item.toStockIssuanceInfo(): StockIssuanceInfo {
     return StockIssuanceInfo(
-        isinCode = isinCd,
-        parValue = stckParPrc,
-        sharesOutstanding = issuStckCnt
+        preferredStockOutstanding = pfstTisuCnt,
+        commonStockOutStanding = onskTisuCnt
     )
 }

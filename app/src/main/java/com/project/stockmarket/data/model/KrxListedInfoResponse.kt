@@ -42,6 +42,7 @@ fun Item.toKrxListedInfo(): KrxListedInfo {
     return KrxListedInfo(
         corpNumber = crno,
         corpName = corpNm,
-        stockName = itmsNm
+        stockName = itmsNm,
+        isinCode = isinCd
     )
 }

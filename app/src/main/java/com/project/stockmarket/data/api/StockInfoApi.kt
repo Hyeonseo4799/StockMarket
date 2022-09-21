@@ -9,15 +9,15 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface StockInfoApi {
-    @GET("/GetStockSecuritiesInfoService/getStockPriceInfo")
+    @GET("1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo")
     suspend fun getStockPriceInfo(
         @Query("serviceKey", encoded = true) serviceKey: String = BuildConfig.API_KEY,
         @Query("resultType") resultType: String = "json",
         @Query("basDt") basDt: String,
-        @Query("itmsNm") itmsNm: String
+        @Query("isinCd") itmsNm: String
     ): StockPriceInfoResponse
 
-    @GET("1160100/service/GetCorpBasicInfoService")
+    @GET("1160100/service/GetCorpBasicInfoService/getCorpOutline")
     suspend fun getCorporationInfo(
         @Query("serviceKey", encoded = true) serviceKey: String = BuildConfig.API_KEY,
         @Query("resultType") resultType: String = "json",
@@ -33,7 +33,7 @@ interface StockInfoApi {
         @Query("likeItmsNm") likeItmsNm: String
     ): KrxListedInfoResponse
 
-    @GET("1160100/service/GetStocIssuInfoService/getItemBasiInfo")
+    @GET("1160100/service/GetStocIssuInfoService/getStocIssuStat")
     suspend fun getStockIssuanceInfo(
         @Query("serviceKey", encoded = true) serviceKey: String = BuildConfig.API_KEY,
         @Query("resultType") resultType: String = "json",
