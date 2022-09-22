@@ -69,13 +69,12 @@ data class CorporationInfoResponse(
 
 fun Item.toCorporationInfo(): CorporationInfo {
     return CorporationInfo(
-        auditReportOpinion = actnAudpnNm,
+        auditReportOpinion = audtRptOpnnCtt,
         corpEngName = corpEnsnNm,
         corpName = corpNm,
         address = enpBsadr,
         establishment = enpEstbDt,
         homepageUrl = enpHmpgUrl,
-        mainBusiness = enpMainBizNm,
         ownerName = enpRprFnm,
         telNumber = enpTlno,
         IndustryCode = sicNm
