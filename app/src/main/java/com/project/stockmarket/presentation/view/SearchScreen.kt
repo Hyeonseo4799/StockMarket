@@ -24,7 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.project.stockmarket.domain.model.KrxListedInfo
 import com.project.stockmarket.presentation.Screen
-import com.project.stockmarket.presentation.utils.KrxListedInfoState
+import com.project.stockmarket.presentation.utils.DataState
 import com.project.stockmarket.presentation.viewmodel.SearchViewModel
 
 @Composable
@@ -40,8 +40,8 @@ fun SearchScreen(
                 .fillMaxWidth()
                 .padding(16.dp),
             onSearch = {
-                if (state.krxListedInfo.isNotEmpty()) {
-                    val company = state.krxListedInfo[0]
+                if (state.data.isNotEmpty()) {
+                    val company = state.data[0]
                     navController.navigate(
                         Screen.DetailScreen.route + "/${company.isinCode}" + "/${company.corpNumber}"
                     )
@@ -99,7 +99,7 @@ fun SearchBar(
 
 @Composable
 fun AutoCompleteView(
-    state: KrxListedInfoState,
+    state: DataState<KrxListedInfo>,
     navController: NavController
 ) {
     Box(
@@ -110,7 +110,7 @@ fun AutoCompleteView(
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
         ) {
-            items(state.krxListedInfo) { krxListedInfo ->
+            items(state.data) { krxListedInfo ->
                 StockListItem(
                     krxListedInfo = krxListedInfo,
                     onItemClick = {
