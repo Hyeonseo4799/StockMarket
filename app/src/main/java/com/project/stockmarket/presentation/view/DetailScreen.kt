@@ -1,6 +1,5 @@
 package com.project.stockmarket.presentation.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,14 +15,17 @@ fun DetailScreen(
     val corporationInfoState = viewModel.corporationInfoState.value
     val stockPriceInfoState = viewModel.stockPriceInfoState.value
     val stockIssuanceInfoState = viewModel.stockIssuanceInfoState.value
+    val koreaStandardIndustryCodeState = viewModel.koreaStandardIndustryCodeState.value
 
     viewModel.getStockPriceInfo(isinCode)
     viewModel.getCorporationInfo(corpNumber)
     viewModel.getStockIssuanceInfo(corpNumber)
+    viewModel.getKoreaStandardIndustryCode()
 
     Column {
-        Text(text = corporationInfoState.corporationInfo.toString())
-        Text(text = stockPriceInfoState.stockPriceInfo.toString())
-        Text(text = stockIssuanceInfoState.stockIssuanceInfo.toString())
+        Text(text = corporationInfoState.data.toString())
+        Text(text = stockPriceInfoState.data.toString())
+        Text(text = stockIssuanceInfoState.data.toString())
+        Text(text = koreaStandardIndustryCodeState.data.toString())
     }
 }
