@@ -1,16 +1,18 @@
 package com.project.stockmarket.presentation.view
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.project.stockmarket.presentation.viewmodel.DetailViewModel
 
 @Composable
 fun DetailScreen(
     viewModel: DetailViewModel = hiltViewModel(),
     isinCode: String,
-    corpNumber: String
+    corpNumber: String,
+    navController: NavController
 ) {
     val corporationInfoState = viewModel.corporationInfoState.value
     val stockPriceInfoState = viewModel.stockPriceInfoState.value
@@ -22,10 +24,11 @@ fun DetailScreen(
     viewModel.getStockIssuanceInfo(corpNumber)
     viewModel.getKoreaStandardIndustryCode()
 
-    Column {
-        Text(text = corporationInfoState.data.toString())
-        Text(text = stockPriceInfoState.data.toString())
-        Text(text = stockIssuanceInfoState.data.toString())
-        Text(text = koreaStandardIndustryCodeState.data.toString())
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (stockPriceInfoState.data.isNotEmpty()) {
+            TopBar(text = stockPriceInfoState.data[0].stockName) {
+                navController.popBackStack()
+            }
+        }
     }
 }
