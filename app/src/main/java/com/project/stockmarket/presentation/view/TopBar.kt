@@ -30,7 +30,7 @@ fun TopBar(text: String, content: @Composable () -> Unit, onBack: () -> Unit) {
                             )
                         }
                     }
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column(modifier = Modifier.weight(5f)) {
                         Text(
                             text = text,
                             style = MaterialTheme.typography.h3,
