@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun TopBar(text: String, onBack: () -> Unit) {
+fun TopBar(text: String, content: @Composable () -> Unit, onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -43,9 +43,8 @@ fun TopBar(text: String, onBack: () -> Unit) {
                     Spacer(modifier = Modifier.weight(1f))
                 }
             }
-
         }
     ) {
-
+        content()
     }
 }
