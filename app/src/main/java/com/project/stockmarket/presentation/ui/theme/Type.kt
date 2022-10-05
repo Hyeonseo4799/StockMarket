@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.sp
 import com.project.stockmarket.R
 
 val Pretendard = FontFamily(
-    Font(R.font.pretendard_regular),
+    Font(R.font.pretendard_regular, FontWeight.Normal),
     Font(R.font.pretendard_medium, FontWeight.Medium),
     Font(R.font.pretendard_semibold, FontWeight.SemiBold)
 )
