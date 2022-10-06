@@ -1,6 +1,6 @@
 package com.project.stockmarket.presentation.view
 
-import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -10,11 +10,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.project.stockmarket.presentation.ui.theme.Background
 import com.project.stockmarket.presentation.utils.DataState
 
 @Composable
 fun <T> StateView(state: List<DataState<out T>>) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Background)
+    ) {
         state.forEach {
             if (it.error.isNotBlank()) {
                 Text(
@@ -28,7 +33,10 @@ fun <T> StateView(state: List<DataState<out T>>) {
                 )
             }
             if (it.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                )
             }
         }
     }

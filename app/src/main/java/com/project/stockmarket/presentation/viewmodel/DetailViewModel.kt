@@ -32,7 +32,11 @@ class DetailViewModel @Inject constructor(
     val stockIssuanceInfoState: State<DataState<StockIssuanceInfo>> = _stockIssuanceInfoState
 
     private val _koreaStandardIndustryCodeState = mutableStateOf(DataState<KoreaStandardIndustryCode>())
-    val koreaStandardIndustryCodeState: State<DataState<KoreaStandardIndustryCode>> = _koreaStandardIndustryCodeState
+    private val koreaStandardIndustryCodeState: State<DataState<KoreaStandardIndustryCode>> = _koreaStandardIndustryCodeState
+
+    init {
+        getKoreaStandardIndustryCode()
+    }
 
     fun getCorporationInfo(crno: String) {
         if (isEmpty(corporationInfoState))
@@ -53,8 +57,14 @@ class DetailViewModel @Inject constructor(
         if (isEmpty(koreaStandardIndustryCodeState))
             executeUseCase((koreaStandardIndustryCodeUseCase()), _koreaStandardIndustryCodeState)
     }
+
+    fun getIndustryClassification(): KoreaStandardIndustryCode? {
+        val industryCode = koreaStandardIndustryCodeState.value.data.let {
+            it.filter { koreaStandardIndustryCode ->
+                koreaStandardIndustryCode.industryCode == corporationInfoState.value.data[0].IndustryCode
+            }
+        }
+        return if (industryCode.isNotEmpty()) industryCode[0] else null
+    }
 }
 
-fun <T> isEmpty(state: State<DataState<T>>): Boolean {
-    return state.value.data.isEmpty()
-}

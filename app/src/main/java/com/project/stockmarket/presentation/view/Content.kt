@@ -20,7 +20,7 @@ import java.text.DecimalFormat
 import kotlin.math.sign
 
 @Composable
-fun Content(stockPriceInfo: StockPriceInfo, industryCode: String) {
+fun CardView(stockPriceInfo: StockPriceInfo, industryCode: String) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,12 +59,10 @@ fun Content(stockPriceInfo: StockPriceInfo, industryCode: String) {
                     color = Color.Gray,
                 )
             }
-
-            val priceChangeRate = checkSign(stockPriceInfo.priceChangeRate.toFloat())
-
+            val priceChangeRate = stockPriceInfo.priceChangeRate.toFloat()
             Text(
-                text = priceChangeRate,
-                color = when (stockPriceInfo.priceChangeRate.toFloat().sign) {
+                text = checkSign(priceChangeRate),
+                color = when (priceChangeRate.sign) {
                     1.0f -> Color.Red
                     -1.0f -> Color.Blue
                     else -> Color.Gray
