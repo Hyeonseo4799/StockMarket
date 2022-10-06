@@ -35,18 +35,26 @@ class DetailViewModel @Inject constructor(
     val koreaStandardIndustryCodeState: State<DataState<KoreaStandardIndustryCode>> = _koreaStandardIndustryCodeState
 
     fun getCorporationInfo(crno: String) {
-        executeUseCase(corporationInfoUseCase(getBaseDate(), crno), _corporationInfoState)
+        if (isEmpty(corporationInfoState))
+            executeUseCase(corporationInfoUseCase(getBaseDate(), crno), _corporationInfoState)
     }
 
     fun getStockPriceInfo(isinCd: String) {
-        executeUseCase(stockPriceInfoUseCase(getBaseDate(), isinCd), _stockPriceInfoState)
+        if (isEmpty(stockPriceInfoState))
+            executeUseCase(stockPriceInfoUseCase(getBaseDate(), isinCd), _stockPriceInfoState)
     }
 
     fun getStockIssuanceInfo(crno: String) {
-        executeUseCase(stockIssuanceInfoUseCase(getBaseDate(), crno), _stockIssuanceInfoState)
+        if (isEmpty(stockIssuanceInfoState))
+            executeUseCase(stockIssuanceInfoUseCase(getBaseDate(), crno), _stockIssuanceInfoState)
     }
 
     fun getKoreaStandardIndustryCode() {
-        executeUseCase((koreaStandardIndustryCodeUseCase()), _koreaStandardIndustryCodeState)
+        if (isEmpty(koreaStandardIndustryCodeState))
+            executeUseCase((koreaStandardIndustryCodeUseCase()), _koreaStandardIndustryCodeState)
     }
+}
+
+fun <T> isEmpty(state: State<DataState<T>>): Boolean {
+    return state.value.data.isEmpty()
 }

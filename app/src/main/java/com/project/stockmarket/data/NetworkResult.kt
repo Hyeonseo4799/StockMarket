@@ -13,7 +13,9 @@ sealed class NetworkResult<T>(val data: T? = null, val message: String? = null) 
 
 fun <T> safeFlow(apiFunc: suspend () -> T): Flow<NetworkResult<T>> = flow {
     try {
-        emit(NetworkResult.Success(apiFunc.invoke()))
+        emit(NetworkResult.Loading())
+        val data = apiFunc.invoke()
+        emit(NetworkResult.Success(data))
     } catch (e: HttpException) {
         emit(NetworkResult.Error(e.localizedMessage ?: "An unexpected error occurred"))
     } catch (e: IOException) {
