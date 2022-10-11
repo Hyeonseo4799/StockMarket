@@ -20,7 +20,7 @@ import java.text.DecimalFormat
 import kotlin.math.sign
 
 @Composable
-fun CardView(stockPriceInfo: StockPriceInfo, industryCode: String) {
+fun CardView(stockPriceInfo: StockPriceInfo, industryClassification: String) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -77,7 +77,7 @@ fun CardView(stockPriceInfo: StockPriceInfo, industryCode: String) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = industryCode,
+                    text = industryClassification,
                     color = TextPrimary,
                     fontWeight = FontWeight.Normal,
                     style = MaterialTheme.typography.h5,

@@ -1,12 +1,17 @@
 package com.project.stockmarket.di
 
+import android.content.Context
+import androidx.room.Room
 import com.project.stockmarket.common.Constants
 import com.project.stockmarket.data.api.StockInfoApi
+import com.project.stockmarket.data.dao.IndustryCodeDao
 import com.project.stockmarket.data.repository.StockInfoRepositoryImpl
+import com.project.stockmarket.database.IndustryCodeDatabase
 import com.project.stockmarket.domain.repository.StockInfoRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -41,4 +46,18 @@ object AppModule {
     fun provideStockInfoRepository(api: StockInfoApi): StockInfoRepository {
         return StockInfoRepositoryImpl(api)
     }
+
+    @Provides
+    @Singleton
+    fun provideIndustryCodeDatabase(
+        @ApplicationContext context: Context
+    ): IndustryCodeDatabase = Room.databaseBuilder(
+        context, IndustryCodeDatabase::class.java, "industry_code_db"
+    ).build()
+
+    @Provides
+    @Singleton
+    fun provideIndustryCodeDao(
+        industryCodeDatabase: IndustryCodeDatabase
+    ): IndustryCodeDao = industryCodeDatabase.industryCodeDao()
 }

@@ -2,8 +2,9 @@ package com.project.stockmarket.presentation.viewmodel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewModelScope
+import com.project.stockmarket.data.repository.IndustryCodeRepositoryImpl
 import com.project.stockmarket.domain.model.CorporationInfo
-import com.project.stockmarket.domain.model.KoreaStandardIndustryCode
 import com.project.stockmarket.domain.model.StockIssuanceInfo
 import com.project.stockmarket.domain.model.StockPriceInfo
 import com.project.stockmarket.domain.usecase.GetCorporationInfoUseCase
@@ -13,6 +14,7 @@ import com.project.stockmarket.domain.usecase.GetStockPriceInfoUseCase
 import com.project.stockmarket.presentation.base.BaseViewModel
 import com.project.stockmarket.presentation.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +22,8 @@ class DetailViewModel @Inject constructor(
     private val corporationInfoUseCase: GetCorporationInfoUseCase,
     private val stockPriceInfoUseCase: GetStockPriceInfoUseCase,
     private val stockIssuanceInfoUseCase: GetStockIssuanceInfoUseCase,
-    private val koreaStandardIndustryCodeUseCase: GetKoreaStandardIndustryCodeUseCase
+    private val koreaStandardIndustryCodeUseCase: GetKoreaStandardIndustryCodeUseCase,
+    private val repository: IndustryCodeRepositoryImpl
 ) : BaseViewModel() {
     private val _stockPriceInfoState = mutableStateOf(DataState<StockPriceInfo>())
     val stockPriceInfoState: State<DataState<StockPriceInfo>> = _stockPriceInfoState
@@ -31,12 +34,8 @@ class DetailViewModel @Inject constructor(
     private val _stockIssuanceInfoState = mutableStateOf(DataState<StockIssuanceInfo>())
     val stockIssuanceInfoState: State<DataState<StockIssuanceInfo>> = _stockIssuanceInfoState
 
-    private val _koreaStandardIndustryCodeState = mutableStateOf(DataState<KoreaStandardIndustryCode>())
-    private val koreaStandardIndustryCodeState: State<DataState<KoreaStandardIndustryCode>> = _koreaStandardIndustryCodeState
-
-    init {
-        getKoreaStandardIndustryCode()
-    }
+    private val _industryClassificationState = mutableStateOf<String>("")
+    val industryClassificationState: State<String> = _industryClassificationState
 
     fun getCorporationInfo(crno: String) {
         if (isEmpty(corporationInfoState))
@@ -53,18 +52,13 @@ class DetailViewModel @Inject constructor(
             executeUseCase(stockIssuanceInfoUseCase(getBaseDate(), crno), _stockIssuanceInfoState)
     }
 
-    fun getKoreaStandardIndustryCode() {
-        if (isEmpty(koreaStandardIndustryCodeState))
-            executeUseCase((koreaStandardIndustryCodeUseCase()), _koreaStandardIndustryCodeState)
-    }
-
-    fun getIndustryClassification(): KoreaStandardIndustryCode? {
-        val industryCode = koreaStandardIndustryCodeState.value.data.let {
-            it.filter { koreaStandardIndustryCode ->
-                koreaStandardIndustryCode.industryCode == corporationInfoState.value.data[0].IndustryCode
+    fun getIndustryClassificationByIndustryCode(industryCode: String) {
+        viewModelScope.launch {
+            repository.getIndustryClassificationByIndustryCode(industryCode).collect { result ->
+                _industryClassificationState.value = result.data.toString()
             }
         }
-        return if (industryCode.isNotEmpty()) industryCode[0] else null
     }
 }
+
 

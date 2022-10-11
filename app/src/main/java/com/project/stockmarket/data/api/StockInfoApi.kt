@@ -1,6 +1,5 @@
 package com.project.stockmarket.data.api
 
-import androidx.compose.ui.unit.Constraints
 import com.project.stockmarket.BuildConfig
 import com.project.stockmarket.common.Constants
 import com.project.stockmarket.data.model.*
@@ -47,5 +46,5 @@ interface StockInfoApi {
         @Query("serviceKey", encoded = true) serviceKey: String = BuildConfig.API_KEY,
         @Query("page") page: String = "1",
         @Query("perPage") perPage: String = "2022"
-    ): KoreaStandardIndustryCodeResponse
+    ): IndustryCodeResponse
 }

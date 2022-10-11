@@ -28,7 +28,7 @@ class StockInfoRepositoryImpl @Inject constructor(
         api.getStockIssuanceInfo(basDt = basDt, crno = crno).response.body.items.item.map { it.toStockIssuanceInfo() }
     }
 
-    override suspend fun getKoreaStandardIndustryCode(): Flow<NetworkResult<List<KoreaStandardIndustryCode>>> = safeFlow {
+    override suspend fun getKoreaStandardIndustryCode(): Flow<NetworkResult<List<IndustryCode>>> = safeFlow {
         api.getKoreaStandardIndustryCode().data.map { it.toKoreaStandardIndustryCode() }
     }
 }

@@ -1,9 +1,9 @@
 package com.project.stockmarket.data.model
 
-import com.project.stockmarket.data.model.KoreaStandardIndustryCodeResponse.Data
-import com.project.stockmarket.domain.model.KoreaStandardIndustryCode
+import com.project.stockmarket.data.model.IndustryCodeResponse.Data
+import com.project.stockmarket.domain.model.IndustryCode
 
-data class KoreaStandardIndustryCodeResponse(
+data class IndustryCodeResponse(
     val currentCount: Int,
     val `data`: List<Data>,
     val matchCount: Int,
@@ -19,8 +19,8 @@ data class KoreaStandardIndustryCodeResponse(
     )
 }
 
-fun Data.toKoreaStandardIndustryCode(): KoreaStandardIndustryCode {
-    return KoreaStandardIndustryCode(
+fun Data.toKoreaStandardIndustryCode(): IndustryCode {
+    return IndustryCode(
         baseDate = 데이터기준일,
         industryClassification = 산업분류명칭,
         industryCode = 산업분류코드

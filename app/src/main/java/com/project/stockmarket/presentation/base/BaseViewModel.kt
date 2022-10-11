@@ -1,6 +1,8 @@
 package com.project.stockmarket.presentation.base
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.stockmarket.data.NetworkResult
@@ -13,13 +15,19 @@ import java.util.*
 
 open class BaseViewModel : ViewModel() {
     fun getBaseDate(): String {
-        val today = getCurrentDate()
-        val currentTime = System.currentTimeMillis()
-        val simpleDateFormat = SimpleDateFormat("yyyyMMdd", Locale.KOREA)
-        var baseDate = Integer.parseInt(simpleDateFormat.format(currentTime)) - 2
-
-        if (today <= 3) baseDate -= (today - 1)
-        return baseDate.toString()
+        // 날짜 계산 로직
+//        val today = getCurrentDate()
+//        val currentTime = System.currentTimeMillis()
+//        val simpleDateFormat = SimpleDateFormat("yyyyMMdd", Locale.KOREA)
+//        var baseDate = Integer.parseInt(simpleDateFormat.format(currentTime)) - 2
+//
+//        if (today <= 3) {
+//            baseDate -= (today - 1)
+//        }
+//        if (baseDate % 10 == 0)
+//            baseDate -= 70
+//        return baseDate.toString()
+        return "20220930"
     }
 
     private fun getCurrentDate(): Int {
@@ -45,5 +53,9 @@ open class BaseViewModel : ViewModel() {
                }
            }
         }.launchIn(viewModelScope)
+    }
+
+    fun <T> isEmpty(state: State<DataState<T>>): Boolean {
+        return state.value.data.isEmpty()
     }
 }
