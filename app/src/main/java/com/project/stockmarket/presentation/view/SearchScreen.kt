@@ -30,7 +30,8 @@ import com.project.stockmarket.presentation.viewmodel.SearchViewModel
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    onBackPress: () -> Unit
 ) {
     val state = viewModel.state.value
     Column {
@@ -52,6 +53,7 @@ fun SearchScreen(
         }
         AutoCompleteView(state, navController)
     }
+    BackButtonPress(onBackPress)
 }
 
 @Composable

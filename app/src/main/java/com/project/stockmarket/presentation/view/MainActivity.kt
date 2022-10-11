@@ -24,10 +24,13 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.SearchScreen.route
+                        startDestination = Screen.Splash.route
                     ) {
+                        composable(route = Screen.Splash.route) {
+                            SplashScreen(navController = navController)
+                        }
                         composable(route = Screen.SearchScreen.route) {
-                            SearchScreen(navController = navController)
+                            SearchScreen(navController = navController) { finish() }
                         }
                         composable(route = Screen.DetailScreen.route + "/{isinCode}" + "/{corpNumber}") {
                             DetailScreen(
