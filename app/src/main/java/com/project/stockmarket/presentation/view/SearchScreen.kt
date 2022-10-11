@@ -43,6 +43,7 @@ fun SearchScreen(
             onSearch = {
                 if (state.data.isNotEmpty()) {
                     val company = state.data[0]
+                    viewModel.setEmptyList()
                     navController.navigate(
                         Screen.DetailScreen.route + "/${company.isinCode}" + "/${company.corpNumber}"
                     )
@@ -51,7 +52,7 @@ fun SearchScreen(
         ) {
             if (it.isEmpty()) viewModel.setEmptyList() else viewModel.getKrxListedInfo(it)
         }
-        AutoCompleteView(state, navController)
+        AutoCompleteView(state, viewModel, navController)
     }
     BackButtonPress(onBackPress)
 }
@@ -102,6 +103,7 @@ fun SearchBar(
 @Composable
 fun AutoCompleteView(
     state: DataState<KrxListedInfo>,
+    viewModel: SearchViewModel,
     navController: NavController
 ) {
     Box(
@@ -116,6 +118,7 @@ fun AutoCompleteView(
                 StockListItem(
                     krxListedInfo = krxListedInfo,
                     onItemClick = {
+                        viewModel.setEmptyList()
                         navController.navigate(Screen.DetailScreen.route + "/${krxListedInfo.isinCode}" + "/${krxListedInfo.corpNumber}")
                     }
                 )
