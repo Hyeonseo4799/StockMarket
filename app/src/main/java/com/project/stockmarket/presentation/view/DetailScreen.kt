@@ -1,14 +1,11 @@
 package com.project.stockmarket.presentation.view
 
-import android.content.ContentValues.TAG
-import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.project.stockmarket.presentation.viewmodel.DetailViewModel
@@ -29,7 +26,8 @@ fun DetailScreen(
     viewModel.getCorporationInfo(corpNumber)
     viewModel.getStockIssuanceInfo(corpNumber)
 
-    Log.d(TAG, isinCode)
+    if (corporationInfoState.data.isNotEmpty())
+        viewModel.getIndustryClassificationByIndustryCode(corporationInfoState.data[0].IndustryCode)
 
     Scaffold(
         topBar = {
@@ -49,43 +47,27 @@ fun DetailScreen(
             ) { }
             StateView(state = listOf(corporationInfoState, stockPriceInfoState))
 
-            if (corporationInfoState.data.isNotEmpty()) {
-                Log.d(TAG, corporationInfoState.data[0].IndustryCode)
-                viewModel.getIndustryClassificationByIndustryCode(corporationInfoState.data[0].IndustryCode)
-                Log.d(TAG, industryClassificationState.toString())
-            }
-
-
-            if (stockPriceInfoState.data.isNotEmpty() && industryClassificationState != null) {
-                CardView(
-                    stockPriceInfo = stockPriceInfoState.data[0],
-                    industryClassification = industryClassificationState
-                )
+            if (stockPriceInfoState.data.isNotEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp)
+                ) {
+                    Spacer(modifier = Modifier.height(26.dp))
+                    CardView(
+                        stockPriceInfo = stockPriceInfoState.data[0],
+                        industryClassification = industryClassificationState
+                    )
+                    Spacer(modifier = Modifier.height(26.dp))
+                    if (stockIssuanceInfoState.data.isNotEmpty() && corporationInfoState.data.isNotEmpty()) {
+                        Contents(corporationInfoState, stockPriceInfoState, stockIssuanceInfoState) {
+                            val url = corporationInfoState.data[0].homepageUrl
+                            val urlHandler = LocalUriHandler.current
+                            urlHandler.openUri("http://${url}")
+                        }
+                    }
+                }
             }
         }
     )
 }
-//        val fdas = industryCodeList.getBundle("fdsa") as DataState<KoreaStandardIndustryCode>
-//        val industryCode = getIndustryClassification(industryCodeState, corporationInfoState)
-
-
-//fun getIndustryClassification(
-//    industryCodeList: ArrayList<String>,
-//    corporationInfoState: DataState<CorporationInfo>
-//): KoreaStandardIndustryCode {
-//    val industryCode = industryCodeList.filter {
-//        it == corporationInfoState.data[0].IndustryCode
-//    }[0].
-//    return industryCode[0]
-//        .filter {
-//        it. == corporationInfoState.data[0].IndustryCode
-//    }
-//    val industryCode = industryCodeState.data.let {
-//        if (corporationInfoState.data.isNotEmpty()) {
-//            it.filter { koreaStandardIndustryCode ->
-//
-//            }
-//        } else null
-//    }
-//    return if (industryCode != null) industryCode[0] else null
-//}
