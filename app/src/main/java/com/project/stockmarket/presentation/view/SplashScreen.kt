@@ -20,11 +20,9 @@ fun SplashScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Text(text = "Splash")
 
-        if (state.data.isNotEmpty()) {
-            LaunchedEffect(Unit) {
-                viewModel.insertIndustryCode(state.data)
-                navController.navigate(Screen.SearchScreen.route)
-            }
+        LaunchedEffect(Unit) {
+            viewModel.insertIndustryCode(state.data)
+            navController.navigate(Screen.SearchScreen.route)
         }
     }
 }

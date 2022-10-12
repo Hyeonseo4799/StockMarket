@@ -8,7 +8,6 @@ import com.project.stockmarket.domain.model.CorporationInfo
 import com.project.stockmarket.domain.model.StockIssuanceInfo
 import com.project.stockmarket.domain.model.StockPriceInfo
 import com.project.stockmarket.domain.usecase.GetCorporationInfoUseCase
-import com.project.stockmarket.domain.usecase.GetKoreaStandardIndustryCodeUseCase
 import com.project.stockmarket.domain.usecase.GetStockIssuanceInfoUseCase
 import com.project.stockmarket.domain.usecase.GetStockPriceInfoUseCase
 import com.project.stockmarket.presentation.base.BaseViewModel
@@ -22,7 +21,6 @@ class DetailViewModel @Inject constructor(
     private val corporationInfoUseCase: GetCorporationInfoUseCase,
     private val stockPriceInfoUseCase: GetStockPriceInfoUseCase,
     private val stockIssuanceInfoUseCase: GetStockIssuanceInfoUseCase,
-    private val koreaStandardIndustryCodeUseCase: GetKoreaStandardIndustryCodeUseCase,
     private val repository: IndustryCodeRepositoryImpl
 ) : BaseViewModel() {
     private val _stockPriceInfoState = mutableStateOf(DataState<StockPriceInfo>())
@@ -34,7 +32,7 @@ class DetailViewModel @Inject constructor(
     private val _stockIssuanceInfoState = mutableStateOf(DataState<StockIssuanceInfo>())
     val stockIssuanceInfoState: State<DataState<StockIssuanceInfo>> = _stockIssuanceInfoState
 
-    private val _industryClassificationState = mutableStateOf<String>("")
+    private val _industryClassificationState = mutableStateOf("")
     val industryClassificationState: State<String> = _industryClassificationState
 
     fun getCorporationInfo(crno: String) {
@@ -55,10 +53,8 @@ class DetailViewModel @Inject constructor(
     fun getIndustryClassificationByIndustryCode(industryCode: String) {
         viewModelScope.launch {
             repository.getIndustryClassificationByIndustryCode(industryCode).collect { result ->
-                _industryClassificationState.value = result.data.toString()
+                _industryClassificationState.value = result.data ?: industryCode
             }
         }
     }
 }
-
-
