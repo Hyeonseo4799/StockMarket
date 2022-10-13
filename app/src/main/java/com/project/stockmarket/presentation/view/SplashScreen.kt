@@ -18,11 +18,13 @@ fun SplashScreen(
 ) {
     val state = viewModel.industryCodeState.value
     Box(modifier = Modifier.fillMaxSize()) {
-        Text(text = "Splash")
+        Text(text = "Loading Database..")
 
-        LaunchedEffect(Unit) {
-            viewModel.insertIndustryCode(state.data)
-            navController.navigate(Screen.SearchScreen.route)
+        if (state.data.isNotEmpty()) {
+            LaunchedEffect(Unit) {
+                viewModel.insertIndustryCode(state.data)
+                navController.navigate(Screen.SearchScreen.route)
+            }
         }
     }
 }

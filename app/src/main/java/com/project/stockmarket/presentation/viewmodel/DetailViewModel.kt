@@ -51,9 +51,11 @@ class DetailViewModel @Inject constructor(
     }
 
     fun getIndustryClassificationByIndustryCode(industryCode: String) {
-        viewModelScope.launch {
-            repository.getIndustryClassificationByIndustryCode(industryCode).collect { result ->
-                _industryClassificationState.value = result.data ?: industryCode
+        if (industryClassificationState.value == "") {
+            viewModelScope.launch {
+                repository.getIndustryClassificationByIndustryCode(industryCode).collect { result ->
+                    _industryClassificationState.value = result.data.toString()
+                }
             }
         }
     }
