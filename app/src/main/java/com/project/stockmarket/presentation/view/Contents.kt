@@ -1,10 +1,14 @@
 package com.project.stockmarket.presentation.view
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -15,13 +19,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.project.stockmarket.R
 import com.project.stockmarket.domain.model.CorporationInfo
 import com.project.stockmarket.domain.model.StockIssuanceInfo
 import com.project.stockmarket.domain.model.StockPriceInfo
+import com.project.stockmarket.presentation.ui.theme.DarkGray
 import com.project.stockmarket.presentation.ui.theme.Shapes
 import com.project.stockmarket.presentation.utils.DataState
 import java.text.DecimalFormat
@@ -31,10 +41,18 @@ fun Contents(
     corporationInfoState: DataState<CorporationInfo>,
     stockPriceInfoState: DataState<StockPriceInfo>,
     stockIssuanceInfoState: DataState<StockIssuanceInfo>,
+    industryClassification: String,
     showOnWebView: @Composable () -> Unit
 ) {
     Column {
         var showWebView by remember { mutableStateOf(false) }
+        val context = LocalContext.current
+        Spacer(modifier = Modifier.weight(1f))
+        CardView(
+            stockPriceInfo = stockPriceInfoState.data[0],
+            industryClassification = industryClassification
+        )
+        Spacer(modifier = Modifier.weight(1f))
         Text(
             text = "데이터 요약",
             modifier = Modifier.fillMaxWidth(),
@@ -153,28 +171,50 @@ fun Contents(
                 text = "위치 : ${corporationInfoState.data[0].address}",
                 fontWeight = FontWeight.Medium,
                 style = MaterialTheme.typography.h5,
-                color = Color.Gray
+                color = DarkGray
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "설립일자 : ${corporationInfoState.data[0].establishment}",
                 fontWeight = FontWeight.Medium,
                 style = MaterialTheme.typography.h5,
-                color = Color.Gray
+                color = DarkGray
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "기업대표자 : ${corporationInfoState.data[0].ownerName}",
                 fontWeight = FontWeight.Medium,
                 style = MaterialTheme.typography.h5,
-                color = Color.Gray
+                color = DarkGray
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "기업전화번호 : ${corporationInfoState.data[0].telNumber}",
-                fontWeight = FontWeight.Medium,
+
+            val tel = corporationInfoState.data[0].telNumber
+            val annotaionText = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Medium, color = DarkGray)) {
+                    append("기업전화번호 : ")
+                }
+                pushStringAnnotation(tag = "PHONE_NUMBER", annotation = tel)
+                withStyle(
+                    style = SpanStyle(
+                        fontWeight = FontWeight.Medium,
+                        color = DarkGray,
+                        textDecoration = TextDecoration.Underline
+                    )
+                ) {
+                    append(tel)
+                }
+                pop()
+            }
+            ClickableText(
+                text = annotaionText,
                 style = MaterialTheme.typography.h5,
-                color = Color.Gray
+                onClick = { offset ->
+                    annotaionText.getStringAnnotations(tag = "PHONE_NUMBER", start = offset, end = offset)
+                        .firstOrNull()?.let { annotaion ->
+                            openDial(tel = annotaion.item, context = context)
+                        }
+                }
             )
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -205,4 +245,10 @@ fun TableView(title: String, content: String) {
             color = Color.Gray
         )
     }
+}
+
+fun openDial(tel: String, context: Context) {
+    val uri = Uri.parse("tel:$tel")
+    val intent = Intent(Intent.ACTION_DIAL, uri)
+    context.startActivity(intent)
 }
