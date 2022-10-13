@@ -15,43 +15,30 @@ import java.util.*
 
 open class BaseViewModel : ViewModel() {
     fun getBaseDate(): String {
-        // 날짜 계산 로직
-//        val today = getCurrentDate()
-//        val currentTime = System.currentTimeMillis()
-//        val simpleDateFormat = SimpleDateFormat("yyyyMMdd", Locale.KOREA)
-//        var baseDate = Integer.parseInt(simpleDateFormat.format(currentTime)) - 2
-//
-//        if (today <= 3) {
-//            baseDate -= (today - 1)
-//        }
-//        if (baseDate % 10 == 0)
-//            baseDate -= 70
-//        return baseDate.toString()
-        return "20220930"
-    }
-
-    private fun getCurrentDate(): Int {
-        val currentTime = System.currentTimeMillis()
-        val date = Date(currentTime)
         val calendar = Calendar.getInstance()
-        calendar.time = date
+        val sdf = SimpleDateFormat("yyyyMMdd", Locale.KOREA)
 
-        return calendar[Calendar.DAY_OF_WEEK]
+        when(calendar.get(Calendar.DAY_OF_WEEK)) {
+            1 -> calendar.add(Calendar.DATE, -3)
+            7 -> calendar.add(Calendar.DATE, -2)
+            else -> calendar.add(Calendar.DATE, -1)
+        }
+        return sdf.format(calendar.time)
     }
 
     fun <T> executeUseCase(data: Flow<NetworkResult<List<T>>>, _state: MutableState<DataState<T>>) {
         data.onEach { result ->
-           when (result) {
-               is NetworkResult.Error -> {
+            when (result) {
+                is NetworkResult.Error -> {
                     _state.value = DataState(error = result.message ?: "An unexpected error occurred")
-               }
-               is NetworkResult.Loading -> {
+                }
+                is NetworkResult.Loading -> {
                     _state.value = DataState(isLoading = true)
-               }
-               is NetworkResult.Success -> {
+                }
+                is NetworkResult.Success -> {
                     _state.value = DataState(data = result.data ?: emptyList())
-               }
-           }
+                }
+            }
         }.launchIn(viewModelScope)
     }
 
