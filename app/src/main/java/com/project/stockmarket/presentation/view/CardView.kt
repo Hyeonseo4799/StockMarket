@@ -1,6 +1,6 @@
 package com.project.stockmarket.presentation.view
 
-import android.util.Log
+import com.project.stockmarket.presentation.ui.theme.Tooltip
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,14 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.github.skgmn.composetooltip.AnchorEdge
-import com.github.skgmn.composetooltip.EdgePosition
-import com.github.skgmn.composetooltip.Tooltip
-import com.github.skgmn.composetooltip.rememberTooltipStyle
-import com.project.stockmarket.R
 import com.project.stockmarket.domain.model.StockPriceInfo
 import com.project.stockmarket.presentation.ui.theme.Shapes
 import com.project.stockmarket.presentation.ui.theme.TextPrimary
@@ -37,55 +31,16 @@ fun CardView(stockPriceInfo: StockPriceInfo, industryClassification: String) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var visibility by remember { mutableStateOf(true) }
-        Box(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(8.dp)
-        ) {
-            Box(
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_tooltip),
-                    contentDescription = "tooltipIcon",
-                    modifier = Modifier.clickable { visibility = true }
-                )
-                if (visibility) {
-                    Tooltip(
-                        anchorEdge = AnchorEdge.Top,
-                        tooltipStyle = rememberTooltipStyle(
-                            color = Color(0x80000000),
-                            tipHeight = 5.dp,
-                            tipWidth = 8.dp,
-                            contentPadding = PaddingValues(8.dp)
-                        ),
-                        tipPosition = EdgePosition(1f),
-                        onDismissRequest = {
-                            Log.d("visibility", "false")
-                            visibility = false
-                        },
-                        margin = 2.dp
-                    )
-                    {
-                        Text(
-                            text = "주가 데이터는 영업일 기준 하루 전 데이터입니다.",
-                            color = Color.White,
-                            style = MaterialTheme.typography.h5,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
-            }
+        Box {
+            Tooltip()
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = 24.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Bottom,
             ) {
                 val dec = DecimalFormat("#,###")
-
                 Text(
                     text = dec.format(Integer.parseInt(stockPriceInfo.closingPrice)),
                     style = MaterialTheme.typography.h1,
@@ -126,17 +81,16 @@ fun CardView(stockPriceInfo: StockPriceInfo, industryClassification: String) {
                 fontWeight = FontWeight.Normal,
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier
-                    .padding(horizontal = 2.dp)
                     .background(TextBackground, Shapes.medium)
                     .padding(horizontal = 12.dp, vertical = 8.dp)
             )
+            Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = stockPriceInfo.ticker,
                 color = TextPrimary,
                 fontWeight = FontWeight.Normal,
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier
-                    .padding(horizontal = 2.dp)
                     .background(TextBackground, Shapes.medium)
                     .padding(horizontal = 12.dp, vertical = 8.dp)
             )
