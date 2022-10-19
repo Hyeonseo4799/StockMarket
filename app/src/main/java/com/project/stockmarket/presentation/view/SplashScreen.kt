@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -16,13 +18,13 @@ fun SplashScreen(
     viewModel: MainViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val state = viewModel.industryCodeState.value
+    val state by viewModel.state.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
         Text(text = "Loading Database..")
 
-        if (state.data.isNotEmpty()) {
+        if (state.ksic.isNotEmpty()) {
             LaunchedEffect(Unit) {
-                viewModel.insertIndustryCode(state.data)
+                viewModel.insertIndustryCode(state.ksic)
                 navController.navigate(Screen.SearchScreen.route)
             }
         }

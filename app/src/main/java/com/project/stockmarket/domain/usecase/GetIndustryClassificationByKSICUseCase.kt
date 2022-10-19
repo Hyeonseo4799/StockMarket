@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetIndustryClassificationByKSICUseCase @Inject constructor(
     private val repository: IndustryCodeRepository
 ) {
-    operator fun invoke(industryCode: String): Flow<NetworkResult<String>> {
-        return repository.getIndustryClassificationByKSIC(industryCode)
+    operator fun invoke(ksic: String): Flow<NetworkResult<String>> {
+        return repository.getIndustryClassificationByKSIC(ksic)
     }
 }

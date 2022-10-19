@@ -1,15 +1,13 @@
 package com.project.stockmarket.presentation.viewmodel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.project.stockmarket.domain.model.CorporationInfo
-import com.project.stockmarket.domain.model.StockIssuanceInfo
-import com.project.stockmarket.domain.model.StockPriceInfo
+import com.project.stockmarket.data.NetworkResult
 import com.project.stockmarket.domain.usecase.DetailUseCases
 import com.project.stockmarket.presentation.base.BaseViewModel
-import com.project.stockmarket.presentation.utils.*
+import com.project.stockmarket.presentation.component.DetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,38 +15,108 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
     private val detailUseCases: DetailUseCases
 ) : BaseViewModel() {
-    private val _stockPriceInfoState = mutableStateOf(DataState<StockPriceInfo>())
-    val stockPriceInfoState: State<DataState<StockPriceInfo>> = _stockPriceInfoState
-
-    private val _corporationInfoState = mutableStateOf(DataState<CorporationInfo>())
-    val corporationInfoState: State<DataState<CorporationInfo>> = _corporationInfoState
-
-    private val _stockIssuanceInfoState = mutableStateOf(DataState<StockIssuanceInfo>())
-    val stockIssuanceInfoState: State<DataState<StockIssuanceInfo>> = _stockIssuanceInfoState
-
-    private val _industryClassificationState = mutableStateOf("")
-    val industryClassificationState: State<String> = _industryClassificationState
+    private val _state = MutableStateFlow(DetailUiState())
+    val state: StateFlow<DetailUiState> = _state
 
     fun getCorporationInfo(crno: String) {
-        if (isEmpty(corporationInfoState))
-            executeUseCase(detailUseCases.getCorporationInfo(getBaseDate(), crno), _corporationInfoState)
+        viewModelScope.launch {
+            detailUseCases.getCorporationInfo(getBaseDate(), crno).collect { result ->
+                when (result) {
+                    is NetworkResult.Error -> {
+                        _state.value = state.value.copy(
+                            error = result.message ?: "An unexpected error occurred",
+                            isLoading = false
+                        )
+                    }
+                    is NetworkResult.Loading -> {
+                        _state.value = state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is NetworkResult.Success -> {
+                        _state.value = state.value.copy(
+                            corporationInfo = result.data ?: emptyList(),
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun getStockPriceInfo(isinCd: String) {
-        if (isEmpty(stockPriceInfoState))
-            executeUseCase(detailUseCases.getStockPriceInfo(getBaseDate(), isinCd), _stockPriceInfoState)
+        viewModelScope.launch {
+            detailUseCases.getStockPriceInfo(getBaseDate(), isinCd).collect { result ->
+                when (result) {
+                    is NetworkResult.Error -> {
+                        _state.value = state.value.copy(
+                            error = result.message ?: "An unexpected error occurred",
+                            isLoading = false
+                        )
+                    }
+                    is NetworkResult.Loading -> {
+                        _state.value = state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is NetworkResult.Success -> {
+                        _state.value = state.value.copy(
+                            stockPriceInfo = result.data ?: emptyList(),
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun getStockIssuanceInfo(crno: String) {
-        if (isEmpty(stockIssuanceInfoState))
-            executeUseCase(detailUseCases.getStockIssuanceInfo(getBaseDate(), crno), _stockIssuanceInfoState)
+        viewModelScope.launch {
+            detailUseCases.getStockIssuanceInfo(getBaseDate(), crno).collect { result ->
+                when (result) {
+                    is NetworkResult.Error -> {
+                        _state.value = state.value.copy(
+                            error = result.message ?: "An unexpected error occurred",
+                            isLoading = false
+                        )
+                    }
+                    is NetworkResult.Loading -> {
+                        _state.value = state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is NetworkResult.Success -> {
+                        _state.value = state.value.copy(
+                            stockIssuanceInfo = result.data ?: emptyList(),
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+        }
     }
 
-    fun getIndustryClassificationByIndustryCode(industryCode: String) {
-        if (industryClassificationState.value == "") {
-            viewModelScope.launch {
-                detailUseCases.getIndustryClassificationByKSIC(industryCode).collect { result ->
-                    _industryClassificationState.value = result.data.toString()
+    fun getIndustryClassificationByKSIC(ksic: String) {
+        viewModelScope.launch {
+            detailUseCases.getIndustryClassificationByKSIC(ksic).collect { result ->
+                when (result) {
+                    is NetworkResult.Error -> {
+                        _state.value = state.value.copy(
+                            error = result.message ?: "An unexpected error occurred",
+                            isLoading = false
+                        )
+                    }
+                    is NetworkResult.Loading -> {
+                        _state.value = state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is NetworkResult.Success -> {
+                        _state.value = state.value.copy(
+                            industryClassification = result.data,
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }

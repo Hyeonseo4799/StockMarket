@@ -24,7 +24,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.project.stockmarket.domain.model.KrxListedInfo
 import com.project.stockmarket.presentation.Screen
-import com.project.stockmarket.presentation.utils.DataState
 import com.project.stockmarket.presentation.viewmodel.SearchViewModel
 
 @Composable
@@ -33,7 +32,7 @@ fun SearchScreen(
     navController: NavController,
     onBackPress: () -> Unit
 ) {
-    val state = viewModel.state.value
+    val state by viewModel.state.collectAsState()
     Column {
         SearchBar(
             hint = "종목명을 입력하세요.",
@@ -52,7 +51,7 @@ fun SearchScreen(
         ) {
             if (it.isEmpty()) viewModel.setEmptyList() else viewModel.getKrxListedInfo(it)
         }
-        AutoCompleteView(state, viewModel, navController)
+        AutoCompleteView(state.data, viewModel, navController)
     }
     BackButtonPress(onBackPress)
 }
@@ -75,9 +74,7 @@ fun SearchBar(
                 onChange(it)
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = {
-                onSearch()
-            }),
+            keyboardActions = KeyboardActions(onSearch = { onSearch() }),
             maxLines = 1,
             singleLine = true,
             textStyle = TextStyle(color = Color.Black),
@@ -86,9 +83,7 @@ fun SearchBar(
                 .shadow(5.dp, CircleShape)
                 .background(Color.White, CircleShape)
                 .padding(horizontal = 20.dp, vertical = 12.dp)
-                .onFocusChanged {
-                    isHintDisplayed = it.isFocused != true
-                }
+                .onFocusChanged { isHintDisplayed = it.isFocused != true }
         )
         if (isHintDisplayed) {
             Text(
@@ -102,7 +97,7 @@ fun SearchBar(
 
 @Composable
 fun AutoCompleteView(
-    state: DataState<KrxListedInfo>,
+    state: List<KrxListedInfo>,
     viewModel: SearchViewModel,
     navController: NavController
 ) {
@@ -114,7 +109,7 @@ fun AutoCompleteView(
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
         ) {
-            items(state.data) { krxListedInfo ->
+            items(state) { krxListedInfo ->
                 StockListItem(
                     krxListedInfo = krxListedInfo,
                     onItemClick = {

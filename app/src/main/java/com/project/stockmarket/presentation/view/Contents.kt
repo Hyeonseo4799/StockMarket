@@ -33,14 +33,13 @@ import com.project.stockmarket.domain.model.StockIssuanceInfo
 import com.project.stockmarket.domain.model.StockPriceInfo
 import com.project.stockmarket.presentation.ui.theme.DarkGray
 import com.project.stockmarket.presentation.ui.theme.Shapes
-import com.project.stockmarket.presentation.utils.DataState
 import java.text.DecimalFormat
 
 @Composable
 fun Contents(
-    corporationInfoState: DataState<CorporationInfo>,
-    stockPriceInfoState: DataState<StockPriceInfo>,
-    stockIssuanceInfoState: DataState<StockIssuanceInfo>,
+    corporationInfoState: CorporationInfo,
+    stockPriceInfoState: StockPriceInfo,
+    stockIssuanceInfoState: StockIssuanceInfo,
     industryClassification: String,
     showOnWebView: @Composable () -> Unit
 ) {
@@ -49,7 +48,7 @@ fun Contents(
         val context = LocalContext.current
         Spacer(modifier = Modifier.weight(1f))
         CardView(
-            stockPriceInfo = stockPriceInfoState.data[0],
+            stockPriceInfo = stockPriceInfoState,
             industryClassification = industryClassification
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -72,12 +71,11 @@ fun Contents(
                     .weight(1f)
             ) {
                 val dec = DecimalFormat("#,###")
-                val data = stockPriceInfoState.data[0]
 
-                TableView("고가", "${dec.format(Integer.parseInt(data.highPrice))}원")
-                TableView("저가", "${dec.format(Integer.parseInt(data.lowPrice))}원")
-                TableView("시초가", "${dec.format(Integer.parseInt(data.openingPrice))}원")
-                TableView("종가", "${dec.format(Integer.parseInt(data.closingPrice))}원")
+                TableView("고가", "${dec.format(Integer.parseInt(stockPriceInfoState.highPrice))}원")
+                TableView("저가", "${dec.format(Integer.parseInt(stockPriceInfoState.lowPrice))}원")
+                TableView("시초가", "${dec.format(Integer.parseInt(stockPriceInfoState.openingPrice))}원")
+                TableView("종가", "${dec.format(Integer.parseInt(stockPriceInfoState.closingPrice))}원")
             }
             Spacer(modifier = Modifier.width(8.dp))
             Column(
@@ -87,13 +85,10 @@ fun Contents(
                     .padding(horizontal = 12.dp, vertical = 8.dp)
                     .weight(1f)
             ) {
-                val stockPriceInfoData = stockPriceInfoState.data[0]
-                val stockIssuanceInfoData = stockIssuanceInfoState.data[0]
-
-                val marketCap = stockPriceInfoData.marketCap.toFloat() / 1E8
-                val tradingValue = stockPriceInfoData.tradingValue.toFloat() / 1E6
-                val stockPriceInfo = stockPriceInfoData.tradingVolume.toFloat() / 1E4
-                val stockIssuanceInfo = stockIssuanceInfoData.commonStockOutStanding.toFloat() / 1E4
+                val marketCap = stockPriceInfoState.marketCap.toFloat() / 1E8
+                val tradingValue = stockPriceInfoState.tradingValue.toFloat() / 1E6
+                val stockPriceInfo = stockPriceInfoState.tradingVolume.toFloat() / 1E4
+                val stockIssuanceInfo = stockIssuanceInfoState.commonStockOutStanding.toFloat() / 1E4
 
                 val dec = DecimalFormat("#,###")
                 TableView("시가총액", "${dec.format(marketCap)}억원")
@@ -111,7 +106,7 @@ fun Contents(
             color = Color.Black
         )
         Spacer(modifier = Modifier.height(5.dp))
-        val auditReportOpinion = corporationInfoState.data[0].auditReportOpinion
+        val auditReportOpinion = corporationInfoState.auditReportOpinion
         Text(
             text = if (auditReportOpinion != "") auditReportOpinion else "의견없음",
             fontWeight = FontWeight.Normal,
@@ -168,28 +163,28 @@ fun Contents(
                 .padding(12.dp)
         ) {
             Text(
-                text = "위치 : ${corporationInfoState.data[0].address}",
+                text = "위치 : ${corporationInfoState.address}",
                 fontWeight = FontWeight.Medium,
                 style = MaterialTheme.typography.h5,
                 color = DarkGray
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "설립일자 : ${corporationInfoState.data[0].establishment}",
+                text = "설립일자 : ${corporationInfoState.establishment}",
                 fontWeight = FontWeight.Medium,
                 style = MaterialTheme.typography.h5,
                 color = DarkGray
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "기업대표자 : ${corporationInfoState.data[0].ownerName}",
+                text = "기업대표자 : ${corporationInfoState.ownerName}",
                 fontWeight = FontWeight.Medium,
                 style = MaterialTheme.typography.h5,
                 color = DarkGray
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            val tel = corporationInfoState.data[0].telNumber
+            val tel = corporationInfoState.telNumber
             val annotationText = buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Medium, color = DarkGray)) {
                     append("기업전화번호 : ")

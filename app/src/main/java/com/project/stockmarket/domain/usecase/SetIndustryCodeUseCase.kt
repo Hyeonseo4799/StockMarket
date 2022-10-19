@@ -8,7 +8,7 @@ import javax.inject.Inject
 class SetIndustryCodeUseCase @Inject constructor(
     private val repository: IndustryCodeRepository
 ) {
-    suspend operator fun invoke(KSIC: KSIC) {
-        repository.insertIndustryCode(KSIC.toKSICEntity())
+    suspend operator fun invoke(ksic: KSIC) {
+        repository.insertIndustryCode(ksic.toKSICEntity())
     }
 }

@@ -1,26 +1,50 @@
 package com.project.stockmarket.presentation.viewmodel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import com.project.stockmarket.domain.model.KrxListedInfo
+import androidx.lifecycle.viewModelScope
+import com.project.stockmarket.data.NetworkResult
 import com.project.stockmarket.domain.usecase.GetKrxListedInfoUseCase
 import com.project.stockmarket.presentation.base.BaseViewModel
-import com.project.stockmarket.presentation.utils.DataState
+import com.project.stockmarket.presentation.component.SearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val krxListedInfoUseCase: GetKrxListedInfoUseCase
 ) : BaseViewModel() {
-    private val _state = mutableStateOf(DataState<KrxListedInfo>())
-    val state: State<DataState<KrxListedInfo>> = _state
+    private val _state = MutableStateFlow(SearchUiState())
+    val state: StateFlow<SearchUiState> = _state
 
     fun getKrxListedInfo(likeItmsNm: String) {
-        executeUseCase(krxListedInfoUseCase(getBaseDate(), likeItmsNm), _state)
+        viewModelScope.launch {
+            krxListedInfoUseCase(getBaseDate(), likeItmsNm).collect { result ->
+                when (result) {
+                    is NetworkResult.Error -> {
+                        _state.value = state.value.copy(
+                            error = result.message ?: "An unexpected error occurred",
+                            isLoading = false
+                        )
+                    }
+                    is NetworkResult.Loading -> {
+                        _state.value = state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is NetworkResult.Success -> {
+                        _state.value = state.value.copy(
+                            data = result.data ?: emptyList(),
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun setEmptyList() {
-        _state.value = DataState(data = emptyList())
+        _state.value = SearchUiState(data = emptyList())
     }
 }

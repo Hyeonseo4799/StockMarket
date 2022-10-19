@@ -3,6 +3,8 @@ package com.project.stockmarket.presentation.view
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
@@ -17,17 +19,14 @@ fun DetailScreen(
     corpNumber: String,
     navController: NavController
 ) {
-    val corporationInfoState = viewModel.corporationInfoState.value
-    val stockPriceInfoState = viewModel.stockPriceInfoState.value
-    val stockIssuanceInfoState = viewModel.stockIssuanceInfoState.value
-    val industryClassificationState = viewModel.industryClassificationState.value
+    val state by viewModel.state.collectAsState()
 
     viewModel.getStockPriceInfo(isinCode)
     viewModel.getCorporationInfo(corpNumber)
     viewModel.getStockIssuanceInfo(corpNumber)
 
-    if (corporationInfoState.data.isNotEmpty())
-        viewModel.getIndustryClassificationByIndustryCode(corporationInfoState.data[0].IndustryCode)
+    if (state.corporationInfo.isNotEmpty())
+        viewModel.getIndustryClassificationByKSIC(state.corporationInfo[0].IndustryCode)
 
     Scaffold(
         topBar = {
@@ -35,8 +34,8 @@ fun DetailScreen(
                 modifier = Modifier.fillMaxWidth(),
                 backgroundColor = MaterialTheme.colors.background
             ) {
-                if (stockPriceInfoState.data.isNotEmpty())
-                    TopBarContent(text = stockPriceInfoState.data[0].stockName, navController = navController)
+                if (state.stockPriceInfo.isNotEmpty())
+                    TopBarContent(text = state.stockPriceInfo[0].stockName, navController = navController)
             }
         },
         content = {
@@ -45,26 +44,28 @@ fun DetailScreen(
                     .fillMaxSize()
                     .padding(it)
             ) { }
-            StateView(state = listOf(corporationInfoState, stockPriceInfoState))
+            StateView(state)
 
-            if (stockPriceInfoState.data.isNotEmpty()) {
+            if (state.stockPriceInfo.isNotEmpty() &&
+                state.stockIssuanceInfo.isNotEmpty() &&
+                state.corporationInfo.isNotEmpty() &&
+                state.industryClassification != null
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 20.dp)
                 ) {
-                    Spacer(modifier = Modifier.height(26.dp))
-                    CardView(
-                        stockPriceInfo = stockPriceInfoState.data[0],
-                        industryClassification = industryClassificationState
-                    )
-                    Spacer(modifier = Modifier.height(26.dp))
-                    if (stockIssuanceInfoState.data.isNotEmpty() && corporationInfoState.data.isNotEmpty()) {
-                        Contents(corporationInfoState, stockPriceInfoState, stockIssuanceInfoState) {
-                            val url = corporationInfoState.data[0].homepageUrl
-                            val urlHandler = LocalUriHandler.current
-                            urlHandler.openUri("http://${url}")
-                        }
+                    val corporationInfo = state.corporationInfo[0]
+                    Contents(
+                        corporationInfoState = state.corporationInfo[0],
+                        stockPriceInfoState = state.stockPriceInfo[0],
+                        stockIssuanceInfoState = state.stockIssuanceInfo[0],
+                        industryClassification = state.industryClassification!!
+                    ) {
+                        val url = corporationInfo.homepageUrl
+                        val urlHandler = LocalUriHandler.current
+                        urlHandler.openUri("http://${url}")
                     }
                 }
             }

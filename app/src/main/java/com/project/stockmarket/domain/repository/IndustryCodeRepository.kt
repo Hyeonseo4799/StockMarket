@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface IndustryCodeRepository {
     suspend fun insertIndustryCode(industryCode: KSICEntity)
-    fun getIndustryClassificationByKSIC(industryCode: String): Flow<NetworkResult<String>>
+    fun getIndustryClassificationByKSIC(ksic: String): Flow<NetworkResult<String>>
 }
