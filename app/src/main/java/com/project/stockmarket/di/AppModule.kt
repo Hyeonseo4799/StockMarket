@@ -2,7 +2,7 @@ package com.project.stockmarket.di
 
 import android.content.Context
 import androidx.room.Room
-import com.project.stockmarket.common.Constants
+import com.project.stockmarket.Constants
 import com.project.stockmarket.data.api.StockInfoApi
 import com.project.stockmarket.data.dao.IndustryCodeDao
 import com.project.stockmarket.data.repository.StockInfoRepositoryImpl
@@ -26,7 +26,7 @@ object AppModule {
     @Singleton
     fun provideStockInfoApi(): StockInfoApi {
         return Retrofit.Builder()
-            .baseUrl(Constants.baseUrl)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(provideOkhttpClient())
             .build()

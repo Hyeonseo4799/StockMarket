@@ -1,7 +1,7 @@
 package com.project.stockmarket.data.api
 
 import com.project.stockmarket.BuildConfig
-import com.project.stockmarket.common.Constants
+import com.project.stockmarket.Constants
 import com.project.stockmarket.data.model.*
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -42,7 +42,7 @@ interface StockInfoApi {
 
     @GET
     suspend fun getKoreaStandardIndustryCode(
-        @Url url: String = Constants.url,
+        @Url url: String = Constants.KSIC_URL,
         @Query("serviceKey", encoded = true) serviceKey: String = BuildConfig.API_KEY,
         @Query("page") page: String = "1",
         @Query("perPage") perPage: String = "2022"
