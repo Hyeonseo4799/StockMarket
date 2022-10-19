@@ -190,7 +190,7 @@ fun Contents(
             Spacer(modifier = Modifier.height(8.dp))
 
             val tel = corporationInfoState.data[0].telNumber
-            val annotaionText = buildAnnotatedString {
+            val annotationText = buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Medium, color = DarkGray)) {
                     append("기업전화번호 : ")
                 }
@@ -207,10 +207,10 @@ fun Contents(
                 pop()
             }
             ClickableText(
-                text = annotaionText,
+                text = annotationText,
                 style = MaterialTheme.typography.h5,
                 onClick = { offset ->
-                    annotaionText.getStringAnnotations(tag = "PHONE_NUMBER", start = offset, end = offset)
+                    annotationText.getStringAnnotations(tag = "PHONE_NUMBER", start = offset, end = offset)
                         .firstOrNull()?.let { annotaion ->
                             openDial(tel = annotaion.item, context = context)
                         }
