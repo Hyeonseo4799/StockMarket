@@ -1,9 +1,9 @@
 package com.project.stockmarket.data.model
 
-import com.project.stockmarket.data.model.IndustryCodeResponse.Data
-import com.project.stockmarket.domain.model.IndustryCode
+import com.project.stockmarket.data.model.KSICResponse.Data
+import com.project.stockmarket.domain.model.KSIC
 
-data class IndustryCodeResponse(
+data class KSICResponse(
     val currentCount: Int,
     val `data`: List<Data>,
     val matchCount: Int,
@@ -19,8 +19,8 @@ data class IndustryCodeResponse(
     )
 }
 
-fun Data.toKoreaStandardIndustryCode(): IndustryCode {
-    return IndustryCode(
+fun Data.toKSIC(): KSIC {
+    return KSIC(
         baseDate = 데이터기준일,
         industryClassification = 산업분류명칭,
         industryCode = 산업분류코드

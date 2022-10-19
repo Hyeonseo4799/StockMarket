@@ -1,16 +1,15 @@
 package com.project.stockmarket.domain.model
 
-import com.project.stockmarket.data.model.IndustryCodeEntity
+import com.project.stockmarket.data.model.KSICEntity
 
-
-data class IndustryCode(
+data class KSIC(
     val baseDate: String,
     val industryClassification: String,
     val industryCode: String
 )
 
-fun IndustryCode.toIndustryCodeEntity(): IndustryCodeEntity {
-    return IndustryCodeEntity(
+fun KSIC.toKSICEntity(): KSICEntity {
+    return KSICEntity(
         baseDate = baseDate,
         industryClassification = industryClassification,
         industryCode = industryCode

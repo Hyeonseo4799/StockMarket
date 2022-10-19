@@ -3,8 +3,8 @@ package com.project.stockmarket.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "industry_code")
-data class IndustryCodeEntity(
+@Entity(tableName = "ksic")
+data class KSICEntity(
     @PrimaryKey
     val industryCode: String,
     val baseDate: String,
