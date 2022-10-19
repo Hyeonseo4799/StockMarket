@@ -4,9 +4,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.project.stockmarket.data.repository.IndustryCodeRepositoryImpl
-import com.project.stockmarket.domain.model.IndustryCode
-import com.project.stockmarket.domain.model.toIndustryCodeEntity
-import com.project.stockmarket.domain.usecase.GetKoreaStandardIndustryCodeUseCase
+import com.project.stockmarket.domain.model.KSIC
+import com.project.stockmarket.domain.model.toKSICEntity
+import com.project.stockmarket.domain.usecase.DetailUseCases
 import com.project.stockmarket.presentation.base.BaseViewModel
 import com.project.stockmarket.presentation.utils.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,26 +15,25 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val koreaStandardIndustryCodeUseCase: GetKoreaStandardIndustryCodeUseCase,
-    private val repository: IndustryCodeRepositoryImpl
+    private val detailUseCases: DetailUseCases
 ) : BaseViewModel() {
-    private val _industryCodeState = mutableStateOf(DataState<IndustryCode>())
-    val industryCodeState: State<DataState<IndustryCode>> = _industryCodeState
+    private val _ksicState = mutableStateOf(DataState<KSIC>())
+    val industryCodeState: State<DataState<KSIC>> = _ksicState
 
     init {
-        getKoreaStandardIndustryCode()
+        getKSIC()
     }
 
-    private fun getKoreaStandardIndustryCode() {
+    private fun getKSIC() {
         if (industryCodeState.value.data.isEmpty()) {
-            executeUseCase(koreaStandardIndustryCodeUseCase(), _industryCodeState)
+            executeUseCase(detailUseCases.getKSIC(), _ksicState)
         }
     }
 
-    fun insertIndustryCode(industryCode: List<IndustryCode>) {
+    fun insertIndustryCode(KSIC: List<KSIC>) {
         viewModelScope.launch {
-            industryCode.forEach {
-                repository.insertIndustryCode(it.toIndustryCodeEntity())
+            KSIC.forEach {
+                detailUseCases.setIndustryCode(it)
             }
         }
     }

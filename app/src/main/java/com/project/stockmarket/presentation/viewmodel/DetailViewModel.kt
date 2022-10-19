@@ -3,13 +3,10 @@ package com.project.stockmarket.presentation.viewmodel
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.project.stockmarket.data.repository.IndustryCodeRepositoryImpl
 import com.project.stockmarket.domain.model.CorporationInfo
 import com.project.stockmarket.domain.model.StockIssuanceInfo
 import com.project.stockmarket.domain.model.StockPriceInfo
-import com.project.stockmarket.domain.usecase.GetCorporationInfoUseCase
-import com.project.stockmarket.domain.usecase.GetStockIssuanceInfoUseCase
-import com.project.stockmarket.domain.usecase.GetStockPriceInfoUseCase
+import com.project.stockmarket.domain.usecase.DetailUseCases
 import com.project.stockmarket.presentation.base.BaseViewModel
 import com.project.stockmarket.presentation.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,10 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val corporationInfoUseCase: GetCorporationInfoUseCase,
-    private val stockPriceInfoUseCase: GetStockPriceInfoUseCase,
-    private val stockIssuanceInfoUseCase: GetStockIssuanceInfoUseCase,
-    private val repository: IndustryCodeRepositoryImpl
+    private val detailUseCases: DetailUseCases
 ) : BaseViewModel() {
     private val _stockPriceInfoState = mutableStateOf(DataState<StockPriceInfo>())
     val stockPriceInfoState: State<DataState<StockPriceInfo>> = _stockPriceInfoState
@@ -37,23 +31,23 @@ class DetailViewModel @Inject constructor(
 
     fun getCorporationInfo(crno: String) {
         if (isEmpty(corporationInfoState))
-            executeUseCase(corporationInfoUseCase(getBaseDate(), crno), _corporationInfoState)
+            executeUseCase(detailUseCases.getCorporationInfo(getBaseDate(), crno), _corporationInfoState)
     }
 
     fun getStockPriceInfo(isinCd: String) {
         if (isEmpty(stockPriceInfoState))
-            executeUseCase(stockPriceInfoUseCase(getBaseDate(), isinCd), _stockPriceInfoState)
+            executeUseCase(detailUseCases.getStockPriceInfo(getBaseDate(), isinCd), _stockPriceInfoState)
     }
 
     fun getStockIssuanceInfo(crno: String) {
         if (isEmpty(stockIssuanceInfoState))
-            executeUseCase(stockIssuanceInfoUseCase(getBaseDate(), crno), _stockIssuanceInfoState)
+            executeUseCase(detailUseCases.getStockIssuanceInfo(getBaseDate(), crno), _stockIssuanceInfoState)
     }
 
     fun getIndustryClassificationByIndustryCode(industryCode: String) {
         if (industryClassificationState.value == "") {
             viewModelScope.launch {
-                repository.getIndustryClassificationByIndustryCode(industryCode).collect { result ->
+                detailUseCases.getIndustryClassificationByKSIC(industryCode).collect { result ->
                     _industryClassificationState.value = result.data.toString()
                 }
             }
