@@ -1,20 +1,23 @@
 package com.project.stockmarket.data.repository
 
 import com.project.stockmarket.data.NetworkResult
-import com.project.stockmarket.data.dao.IndustryCodeDao
-import com.project.stockmarket.data.model.IndustryCodeEntity
+import com.project.stockmarket.data.repository.datasource.IndustryCodeDataSource
+import com.project.stockmarket.data.model.KSICEntity
 import com.project.stockmarket.data.safeFlow
+import com.project.stockmarket.domain.repository.IndustryCodeRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class IndustryCodeRepositoryImpl @Inject constructor(
-    private val industryCodeDao: IndustryCodeDao
-) {
-    suspend fun insertIndustryCode(industryCode: IndustryCodeEntity) {
-        industryCodeDao.insertIndustryCode(industryCode)
+    private val industryCodeDataSource: IndustryCodeDataSource
+) : IndustryCodeRepository {
+    override suspend fun insertIndustryCode(industryCode: KSICEntity) {
+        industryCodeDataSource.insertIndustryCode(industryCode)
     }
 
-    suspend fun getIndustryClassificationByIndustryCode(industryCode: String): Flow<NetworkResult<String>> = safeFlow {
-        industryCodeDao.getIndustryClassificationByIndustryCode(industryCode)
+    override fun getIndustryClassificationByKSIC(
+        industryCode: String
+    ): Flow<NetworkResult<String>> = safeFlow {
+        industryCodeDataSource.getIndustryClassificationByKSIC(industryCode)
     }
 }
