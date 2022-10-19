@@ -41,10 +41,10 @@ interface StockInfoApi {
     ): StockIssuanceInfoResponse
 
     @GET
-    suspend fun getKoreaStandardIndustryCode(
+    suspend fun getKSIC(
         @Url url: String = Constants.KSIC_URL,
         @Query("serviceKey", encoded = true) serviceKey: String = BuildConfig.API_KEY,
         @Query("page") page: String = "1",
         @Query("perPage") perPage: String = "2022"
-    ): IndustryCodeResponse
+    ): KSICResponse
 }

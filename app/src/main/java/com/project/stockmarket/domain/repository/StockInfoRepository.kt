@@ -9,5 +9,5 @@ interface StockInfoRepository {
     fun getCorporationInfo(basDt: String, crno: String): Flow<NetworkResult<List<CorporationInfo>>>
     fun getKrxListedInfo(basDt: String, likeItmsNm: String): Flow<NetworkResult<List<KrxListedInfo>>>
     fun getStockIssuanceInfo(basDt: String, crno: String): Flow<NetworkResult<List<StockIssuanceInfo>>>
-    fun getKoreaStandardIndustryCode(): Flow<NetworkResult<List<IndustryCode>>>
+    fun getKSIC(): Flow<NetworkResult<List<KSIC>>>
 }
