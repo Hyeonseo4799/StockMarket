@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetStockIssuanceInfoUseCase @Inject constructor(
     private val repository: StockInfoRepository
 ) {
-    operator fun invoke(basDt: String, crno: String): Flow<NetworkResult<List<StockIssuanceInfo>>> {
-        return repository.getStockIssuanceInfo(basDt, crno)
+    operator fun invoke(baseDate: String, corpNumber: String): Flow<NetworkResult<List<StockIssuanceInfo>>> {
+        return repository.getStockIssuanceInfo(baseDate, corpNumber)
     }
 }

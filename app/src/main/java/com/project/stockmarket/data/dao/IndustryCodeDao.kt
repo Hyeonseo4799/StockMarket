@@ -9,8 +9,8 @@ import com.project.stockmarket.data.model.KSICEntity
 @Dao
 interface IndustryCodeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertIndustryCode(industryCode: KSICEntity)
+    suspend fun insertIndustryCode(ksicEntity: KSICEntity)
 
-    @Query("SELECT industryClassification FROM ksic WHERE industryCode = :industryCode")
+    @Query("SELECT industryClassification FROM ksic_db WHERE industryCode = :industryCode")
     suspend fun getIndustryClassificationByKSIC(industryCode: String): String
 }

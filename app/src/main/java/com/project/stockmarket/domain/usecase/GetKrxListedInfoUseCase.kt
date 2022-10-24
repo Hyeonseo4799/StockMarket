@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetKrxListedInfoUseCase @Inject constructor(
     private val repository: StockInfoRepository
 ) {
-    operator fun invoke(basDt: String, likeItmsNm: String): Flow<NetworkResult<List<KrxListedInfo>>> {
-        return repository.getKrxListedInfo(basDt, likeItmsNm)
+    operator fun invoke(baseDate: String, likeItmsNm: String): Flow<NetworkResult<List<KrxListedInfo>>> {
+        return repository.getKrxListedInfo(baseDate, likeItmsNm)
     }
 }
