@@ -1,13 +1,13 @@
 package com.project.stockmarket.presentation.viewmodel
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.project.stockmarket.domain.usecase.DetailUseCases
 import com.project.stockmarket.presentation.base.BaseViewModel
 import com.project.stockmarket.presentation.component.DetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -26,13 +26,14 @@ class DetailViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getCorporationInfo(corpNumber)
-            getStockPriceInfo(isinCode)
-            getStockIssuanceInfo(corpNumber)
-
-            if (_uiState.value.data.corporationInfo != null) {
-                getIndustryClassification(_uiState.value.data.corporationInfo!!.IndustryCode)
-            }
+            _uiState.update { it.copy(isLoading = true) }
+            val deferreds  = listOf(
+                async { getCorporationInfo(corpNumber) },
+                async { getStockPriceInfo(isinCode) },
+                async { getStockIssuanceInfo(corpNumber) }
+            )
+            deferreds.awaitAll()
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
@@ -40,6 +41,7 @@ class DetailViewModel @Inject constructor(
         detailUseCases.getCorporationInfo(getBaseDate(), corpNumber).collect { result ->
             try {
                 _uiState.update { it.copy(data = _uiState.value.data.copy(corporationInfo = result.data?.get(0))) }
+                getIndustryClassification(_uiState.value.data.corporationInfo!!.IndustryCode)
             } catch (e: Exception) {
                 _uiState.value.error = e.localizedMessage ?: "Unknown Error"
             }
@@ -54,7 +56,6 @@ class DetailViewModel @Inject constructor(
                 _uiState.value.error = e.localizedMessage ?: "Unknown Error"
             }
         }
-
     }
 
     private suspend fun getStockIssuanceInfo(corpNumber: String) {
@@ -64,7 +65,6 @@ class DetailViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value.error = e.localizedMessage ?: "Unknown Error"
             }
-
         }
     }
 
@@ -75,7 +75,6 @@ class DetailViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value.error = e.localizedMessage ?: "Unknown Error"
             }
-
         }
     }
 }

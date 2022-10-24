@@ -18,7 +18,7 @@ fun SplashScreen(
     viewModel: MainViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.uiState.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
         Text(text = "Loading Database..")
 

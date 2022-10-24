@@ -20,7 +20,6 @@ class SearchViewModel @Inject constructor(
 
     fun getKrxListedInfo(likeItmsNm: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
             try {
                 krxListedInfoUseCase(getBaseDate(), likeItmsNm).collect { result ->
                     _uiState.update { it.copy(data = result.data ?: emptyList()) }
