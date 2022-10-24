@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
@@ -15,60 +16,55 @@ import com.project.stockmarket.presentation.viewmodel.DetailViewModel
 @Composable
 fun DetailScreen(
     viewModel: DetailViewModel = hiltViewModel(),
-    isinCode: String,
-    corpNumber: String,
     navController: NavController
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
-    viewModel.getStockPriceInfo(isinCode)
-    viewModel.getCorporationInfo(corpNumber)
-    viewModel.getStockIssuanceInfo(corpNumber)
-
-    if (state.corporationInfo.isNotEmpty())
-        viewModel.getIndustryClassificationByKSIC(state.corporationInfo[0].IndustryCode)
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                modifier = Modifier.fillMaxWidth(),
-                backgroundColor = MaterialTheme.colors.background
-            ) {
-                if (state.stockPriceInfo.isNotEmpty())
-                    TopBarContent(text = state.stockPriceInfo[0].stockName, navController = navController)
-            }
-        },
-        content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
-            ) { }
-            StateView(state)
-
-            if (state.stockPriceInfo.isNotEmpty() &&
-                state.stockIssuanceInfo.isNotEmpty() &&
-                state.corporationInfo.isNotEmpty() &&
-                state.industryClassification != null
-            ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    backgroundColor = MaterialTheme.colors.background
+                ) {
+                    if (state.data.stockPriceInfo != null)
+                        TopBarContent(text = state.data.stockPriceInfo!!.stockName, navController = navController)
+                }
+            },
+            content = {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 20.dp)
+                        .padding(it)
+                ) { }
+
+                if (state.data.stockPriceInfo != null &&
+                    state.data.stockIssuanceInfo != null &&
+                    state.data.corporationInfo != null &&
+                    state.data.industryClassification != null
                 ) {
-                    val corporationInfo = state.corporationInfo[0]
-                    Contents(
-                        corporationInfoState = state.corporationInfo[0],
-                        stockPriceInfoState = state.stockPriceInfo[0],
-                        stockIssuanceInfoState = state.stockIssuanceInfo[0],
-                        industryClassification = state.industryClassification!!
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp)
                     ) {
-                        val url = corporationInfo.homepageUrl
-                        val urlHandler = LocalUriHandler.current
-                        urlHandler.openUri("http://${url}")
+                        val corporationInfo = state.data.corporationInfo
+                        Contents(
+                            corporationInfoState = state.data.corporationInfo!!,
+                            stockPriceInfoState = state.data.stockPriceInfo!!,
+                            stockIssuanceInfoState = state.data.stockIssuanceInfo!!,
+                            industryClassification = state.data.industryClassification!!
+                        ) {
+                            val url = corporationInfo!!.homepageUrl
+                            val urlHandler = LocalUriHandler.current
+                            urlHandler.openUri("http://${url}")
+                        }
                     }
                 }
             }
+        )
+        if (state.isLoading) {
+            CircularProgressIndicator(Modifier.align(Alignment.Center))
         }
-    )
+    }
 }

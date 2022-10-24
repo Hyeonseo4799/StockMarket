@@ -32,7 +32,7 @@ fun SearchScreen(
     navController: NavController,
     onBackPress: () -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.uiState.collectAsState()
     Column {
         SearchBar(
             hint = "종목명을 입력하세요.",

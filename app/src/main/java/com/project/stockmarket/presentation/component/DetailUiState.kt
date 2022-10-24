@@ -7,11 +7,15 @@ import com.project.stockmarket.domain.model.StockPriceInfo
 
 data class DetailUiState(
     val isLoading: Boolean = false,
-    val corporationInfo: List<CorporationInfo> = emptyList(),
-    val stockPriceInfo: List<StockPriceInfo> = emptyList(),
-    val stockIssuanceInfo: List<StockIssuanceInfo> = emptyList(),
+    val data: DetailData = DetailData(),
+    var error: String = ""
+)
+
+data class DetailData(
+    val corporationInfo: CorporationInfo? = null,
+    val stockPriceInfo: StockPriceInfo? = null,
+    val stockIssuanceInfo: StockIssuanceInfo? = null,
     val industryClassification: String? = null,
     val industryCode: String? = null,
     val ksic: List<KSIC> = emptyList(),
-    val error: String = ""
 )

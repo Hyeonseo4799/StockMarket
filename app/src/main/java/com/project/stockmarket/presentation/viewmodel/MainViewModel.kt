@@ -1,7 +1,6 @@
 package com.project.stockmarket.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.project.stockmarket.data.NetworkResult
 import com.project.stockmarket.domain.model.KSIC
 import com.project.stockmarket.domain.usecase.DetailUseCases
 import com.project.stockmarket.presentation.base.BaseViewModel
@@ -10,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,32 +26,18 @@ class MainViewModel @Inject constructor(
     private fun getKSIC() {
         viewModelScope.launch {
             detailUseCases.getKSIC().collect { result ->
-                when (result) {
-                    is NetworkResult.Error -> {
-                        _state.value = state.value.copy(
-                            error = result.message ?: "An unexpected error occurred",
-                            isLoading = false
-                        )
-                    }
-                    is NetworkResult.Loading -> {
-                        _state.value = state.value.copy(
-                            isLoading = true
-                        )
-                    }
-                    is NetworkResult.Success -> {
-                        _state.value = state.value.copy(
-                            ksic = result.data ?: emptyList(),
-                            isLoading = false
-                        )
-                    }
+                try {
+                    result.data?.let { insertIndustryCode(it) }
+                } catch (e: Exception) {
+                    _state.value.error = e.localizedMessage ?: "Unknown Error"
                 }
             }
         }
     }
 
-    fun insertIndustryCode(KSIC: List<KSIC>) {
+    fun insertIndustryCode(ksic: List<KSIC>) {
         viewModelScope.launch {
-            KSIC.forEach {
+            ksic.forEach {
                 detailUseCases.setIndustryCode(it)
             }
         }

@@ -1,13 +1,13 @@
 package com.project.stockmarket.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.project.stockmarket.data.NetworkResult
 import com.project.stockmarket.domain.usecase.GetKrxListedInfoUseCase
 import com.project.stockmarket.presentation.base.BaseViewModel
 import com.project.stockmarket.presentation.component.SearchUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,36 +15,23 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val krxListedInfoUseCase: GetKrxListedInfoUseCase
 ) : BaseViewModel() {
-    private val _state = MutableStateFlow(SearchUiState())
-    val state: StateFlow<SearchUiState> = _state
+    private val _uiState = MutableStateFlow(SearchUiState())
+    val uiState: StateFlow<SearchUiState> = _uiState
 
     fun getKrxListedInfo(likeItmsNm: String) {
         viewModelScope.launch {
-            krxListedInfoUseCase(getBaseDate(), likeItmsNm).collect { result ->
-                when (result) {
-                    is NetworkResult.Error -> {
-                        _state.value = state.value.copy(
-                            error = result.message ?: "An unexpected error occurred",
-                            isLoading = false
-                        )
-                    }
-                    is NetworkResult.Loading -> {
-                        _state.value = state.value.copy(
-                            isLoading = true
-                        )
-                    }
-                    is NetworkResult.Success -> {
-                        _state.value = state.value.copy(
-                            data = result.data ?: emptyList(),
-                            isLoading = false
-                        )
-                    }
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                krxListedInfoUseCase(getBaseDate(), likeItmsNm).collect { result ->
+                    _uiState.update { it.copy(data = result.data ?: emptyList()) }
                 }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.localizedMessage ?: "Unknown error") }
             }
         }
     }
 
     fun setEmptyList() {
-        _state.value = SearchUiState(data = emptyList())
+        _uiState.value = SearchUiState(data = emptyList())
     }
 }

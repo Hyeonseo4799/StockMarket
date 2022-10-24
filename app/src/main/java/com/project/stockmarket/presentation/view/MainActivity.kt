@@ -34,8 +34,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = Screen.DetailScreen.route + "/{isinCode}" + "/{corpNumber}") {
                             DetailScreen(
-                                isinCode = it.arguments!!.getString("isinCode")!!,
-                                corpNumber = it.arguments!!.getString("corpNumber")!!,
                                 navController = navController
                             )
                         }

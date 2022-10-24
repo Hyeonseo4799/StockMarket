@@ -22,11 +22,9 @@ fun SplashScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Text(text = "Loading Database..")
 
-        if (state.ksic.isNotEmpty()) {
-            LaunchedEffect(Unit) {
-                viewModel.insertIndustryCode(state.ksic)
-                navController.navigate(Screen.SearchScreen.route)
-            }
+        LaunchedEffect(Unit) {
+            viewModel.insertIndustryCode(state.data.ksic)
+            navController.navigate(Screen.SearchScreen.route)
         }
     }
 }
