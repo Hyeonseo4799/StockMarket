@@ -1,6 +1,7 @@
 package com.project.stockmarket.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.project.stockmarket.data.NetworkResult
 import com.project.stockmarket.domain.usecase.GetKrxListedInfoUseCase
 import com.project.stockmarket.presentation.base.BaseViewModel
 import com.project.stockmarket.presentation.component.SearchUiState
@@ -20,12 +21,11 @@ class SearchViewModel @Inject constructor(
 
     fun getKrxListedInfo(likeItmsNm: String) {
         viewModelScope.launch {
-            try {
-                krxListedInfoUseCase(getBaseDate(), likeItmsNm).collect { result ->
-                    _uiState.update { it.copy(data = result.data ?: emptyList()) }
+            krxListedInfoUseCase(getBaseDate(), likeItmsNm).collect { result ->
+                when(result) {
+                    is NetworkResult.Error -> _uiState.update { it.copy(error = result.message ?: "Unknown Error") }
+                    is NetworkResult.Success -> _uiState.update { it.copy(data = result.data ?: emptyList()) }
                 }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.localizedMessage ?: "Unknown error") }
             }
         }
     }
