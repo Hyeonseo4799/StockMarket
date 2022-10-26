@@ -21,7 +21,6 @@ data class KSICResponse(
 
 fun Data.toKSIC(): KSIC {
     return KSIC(
-        baseDate = 데이터기준일,
         industryClassification = 산업분류명칭,
         industryCode = 산업분류코드
     )

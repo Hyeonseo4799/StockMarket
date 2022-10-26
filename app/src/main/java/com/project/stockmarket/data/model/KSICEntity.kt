@@ -8,6 +8,5 @@ import com.project.stockmarket.Constants
 data class KSICEntity(
     @PrimaryKey
     val industryCode: String,
-    val baseDate: String,
     val industryClassification: String
 )
