@@ -37,16 +37,21 @@ fun DetailScreen(
                         .fillMaxSize()
                         .padding(it)
                 ) { }
-
-                if (state.data.stockPriceInfo != null &&
-                    state.data.stockIssuanceInfo != null &&
-                    state.data.corporationInfo != null &&
-                    state.data.industryClassification != null
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp)
+                    if (state.isLoading) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        }
+                    }
+
+                    if (state.data.corporationInfo != null &&
+                        state.data.stockPriceInfo != null &&
+                        state.data.stockIssuanceInfo != null &&
+                        state.data.industryClassification != null
                     ) {
                         val corporationInfo = state.data.corporationInfo
                         Contents(
@@ -63,8 +68,5 @@ fun DetailScreen(
                 }
             }
         )
-        if (state.isLoading) {
-            CircularProgressIndicator(Modifier.align(Alignment.Center))
-        }
     }
 }

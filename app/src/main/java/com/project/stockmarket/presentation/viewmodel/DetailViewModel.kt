@@ -10,7 +10,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,54 +26,38 @@ class DetailViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val deferreds  = listOf(
+            val deferred = listOf(
                 async { getCorporationInfo(corpNumber) },
                 async { getStockPriceInfo(isinCode) },
                 async { getStockIssuanceInfo(corpNumber) }
             )
-            deferreds.awaitAll()
+            deferred.awaitAll()
+            getIndustryClassification(_uiState.value.data.corporationInfo!!.IndustryCode)
             _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     private suspend fun getCorporationInfo(corpNumber: String) {
-        detailUseCases.getCorporationInfo(getBaseDate(), corpNumber).collect { result ->
-            try {
-                _uiState.update { it.copy(data = _uiState.value.data.copy(corporationInfo = result.data?.get(0))) }
-                getIndustryClassification(_uiState.value.data.corporationInfo!!.IndustryCode)
-            } catch (e: Exception) {
-                _uiState.value.error = e.localizedMessage ?: "Unknown Error"
-            }
+        invokeUseCase(detailUseCases.getCorporationInfo(getBaseDate(), corpNumber), _uiState) { result ->
+            _uiState.update { it.copy(data = _uiState.value.data.copy(corporationInfo = result.data?.get(0))) }
         }
     }
 
     private suspend fun getStockPriceInfo(isinCode: String) {
-        detailUseCases.getStockPriceInfo(getBaseDate(), isinCode).collect { result ->
-            try {
-                _uiState.update { it.copy(data = _uiState.value.data.copy(stockPriceInfo = result.data?.get(0))) }
-            } catch (e: Exception) {
-                _uiState.value.error = e.localizedMessage ?: "Unknown Error"
-            }
+        invokeUseCase(detailUseCases.getStockPriceInfo(getBaseDate(), isinCode), _uiState) { result ->
+            _uiState.update { it.copy(data = _uiState.value.data.copy(stockPriceInfo = result.data?.get(0))) }
         }
     }
 
     private suspend fun getStockIssuanceInfo(corpNumber: String) {
-        detailUseCases.getStockIssuanceInfo(getBaseDate(), corpNumber).collect { result ->
-            try {
-                _uiState.update { it.copy(data = _uiState.value.data.copy(stockIssuanceInfo = result.data?.get(0))) }
-            } catch (e: Exception) {
-                _uiState.value.error = e.localizedMessage ?: "Unknown Error"
-            }
+        invokeUseCase(detailUseCases.getStockIssuanceInfo(getBaseDate(), corpNumber), _uiState) { result ->
+            _uiState.update { it.copy(data = _uiState.value.data.copy(stockIssuanceInfo = result.data?.get(0))) }
         }
     }
 
     private suspend fun getIndustryClassification(ksic: String) {
-        detailUseCases.getIndustryClassificationByKSIC(ksic).collect { result ->
-            try {
-                _uiState.update { it.copy(data = _uiState.value.data.copy(industryClassification = result.data)) }
-            } catch (e: Exception) {
-                _uiState.value.error = e.localizedMessage ?: "Unknown Error"
-            }
+        invokeUseCase(detailUseCases.getIndustryClassificationByKSIC(ksic), _uiState) { result ->
+            _uiState.update { it.copy(data = _uiState.value.data.copy(industryClassification = result.data)) }
         }
     }
 }

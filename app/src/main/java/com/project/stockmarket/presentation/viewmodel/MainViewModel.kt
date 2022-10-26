@@ -9,33 +9,24 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val detailUseCases: DetailUseCases
 ) : BaseViewModel() {
-    private val _state = MutableStateFlow(DetailUiState())
-    val state: StateFlow<DetailUiState> = _state
+    private val _uiState = MutableStateFlow(DetailUiState())
+    val uiState: StateFlow<DetailUiState> = _uiState
 
-    init {
-        getKSIC()
-    }
-
-    private fun getKSIC() {
+    fun getKSIC() {
         viewModelScope.launch {
-            detailUseCases.getKSIC().collect { result ->
-                try {
-                    result.data?.let { insertIndustryCode(it) }
-                } catch (e: Exception) {
-                    _state.value.error = e.localizedMessage ?: "Unknown Error"
-                }
+            invokeUseCase(detailUseCases.getKSIC(), _uiState) { result ->
+                insertIndustryCode(result.data ?: emptyList())
             }
         }
     }
 
-    fun insertIndustryCode(ksic: List<KSIC>) {
+    private fun insertIndustryCode(ksic: List<KSIC>) {
         viewModelScope.launch {
             ksic.forEach {
                 detailUseCases.setIndustryCode(it)

@@ -1,14 +1,11 @@
 package com.project.stockmarket.presentation.component
 
-import com.project.stockmarket.domain.model.CorporationInfo
-import com.project.stockmarket.domain.model.KSIC
-import com.project.stockmarket.domain.model.StockIssuanceInfo
-import com.project.stockmarket.domain.model.StockPriceInfo
+import com.project.stockmarket.domain.model.*
 
 data class DetailUiState(
     val isLoading: Boolean = false,
     val data: DetailData = DetailData(),
-    var error: String = ""
+    val error: String = ""
 )
 
 data class DetailData(
@@ -16,6 +13,4 @@ data class DetailData(
     val stockPriceInfo: StockPriceInfo? = null,
     val stockIssuanceInfo: StockIssuanceInfo? = null,
     val industryClassification: String? = null,
-    val industryCode: String? = null,
-    val ksic: List<KSIC> = emptyList(),
 )
