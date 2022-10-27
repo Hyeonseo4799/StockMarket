@@ -32,7 +32,8 @@ fun TopBarContent(text: String, navController: NavController) {
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colors.primary
             )
         }
         Spacer(modifier = Modifier.weight(1f))
